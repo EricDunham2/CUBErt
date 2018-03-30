@@ -16,7 +16,7 @@ class Panel {
     constructor(name, guid, snapshot, pixels) {
         this.sequence_number = null;
         this.name = name;
-	this.guid = guid;
+	    this.guid = guid;
         this.snapshot = snapshot;
         this.pixels = pixels;
     }
@@ -79,7 +79,7 @@ function save() {
 }
 
 function apply() {
-    _request('POST','/apply',true,JSON.stringify(current_panel));
+    _request('POST','/apply',true,JSON.stringify(getPixels()));
 }
 
 function getSnapshot() {
@@ -101,7 +101,6 @@ function getPixels() {
             pixels.push(new Pixel(x, y, color));
         }
     }
-
     return pixels;
 }
 

@@ -24,28 +24,28 @@ class Panel {
 
 class Pixel {
     constructor(x, y, color) {
-        this.x = x;
-        this.y = y;
+        this.x = String(x);
+        this.y = String(y);
         this.color = color;
     }
 }
 
 class Color {
     constructor(r, g, b) {
-        this.r = r;
-        this.g = g;
-        this.b = b;
+        this.r = String(r);
+        this.g = String(g);
+        this.b = String(b);
     }
 
     static toColor(colorString) {
-        colorString = colorString.slice(4, colorString.length - 1).replace(' ', '');
+        colorString = colorString.slice(4, colorString.length - 1).replace(/ /g, '');
         var arr = colorString.split(',');
         return new Color(arr[0], arr[1], arr[2]);
         //Some code to convert RGB string to Color object
     }
 
     toRGBString() {
-        return `rgb(${this.r},${this.g},${this.b})`;
+        return `rgb(${this.r},${this.g},${this.b})`.replace(' ','');
     }
 }
 

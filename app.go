@@ -6,38 +6,26 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+        "image/color"
 	"time"
 	"flag"
 	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
 	"github.com/mcuadros/go-rpi-rgb-led-matrix"
-	"io/ioutil"
+	//"io/ioutil"
 )
 
-var (
+ var (
 	rows                     = flag.Int("led-rows", 32, "number of rows supported")
 	cols                     = flag.Int("led-cols", 32, "number of columns supported")
 	parallel                 = flag.Int("led-parallel", 1, "number of daisy-chained panels")
-	chain                    = flag.Int("led-chain", 2, "number of displays daisy-chained")
+	chain                    = flag.Int("led-chain", 1, "number of displays daisy-chained")
 	brightness               = flag.Int("brightness", 100, "brightness (0-100)")
-	hardware_mapping         = flag.String("led-gpio-mapping", "regular", "Name of GPIO mapping used.")
+	hardware_mapping         = flag.String("led-gpio-mapping", "adafruit-hat-pwm", "Name of GPIO mapping used.")
 	show_refresh             = flag.Bool("led-show-refresh", false, "Show refresh rate.")
 	inverse_colors           = flag.Bool("led-inverse", false, "Switch if your matrix has inverse colors on.")
 	disable_hardware_pulsing = flag.Bool("led-no-hardware-pulse", false, "Don't use hardware pin-pulse generation.")
-	matrix = init_matrix()
 )
-
-/*type Color struct {
-	r uint8
-	g uint8
-	b uint8
-}
-
-type Pixel struct {
-	x   uint
-	y   uint
-	rgb Color
-}*/
 
 type MatrixPanel struct {
 	id       string
@@ -46,9 +34,29 @@ type MatrixPanel struct {
 	//matrix   [][]Pixel
 }
 
+var matrix rgbmatrix.Matrix = init_matrix()
+var canvas *rgbmatrix.Canvas = rgbmatrix.NewCanvas(matrix)
+
+func init_matrix()(rgbmatrix.Matrix){
+	config := &rgbmatrix.DefaultConfig
+	config.Rows = *rows
+	config.Cols = *cols
+	config.Parallel = *parallel
+	config.ChainLength = *chain
+	config.Brightness = *brightness
+	config.HardwareMapping = *hardware_mapping
+	config.ShowRefreshRate = *show_refresh
+	config.InverseColors = *inverse_colors
+	config.DisableHardwarePulsing = *disable_hardware_pulsing
+
+	m, _ := rgbmatrix.NewRGBLedMatrix(config)	
+	return m
+}
+
 func main() {
 
 	//Init Endpoints
+	defer canvas.Close()
 	router := mux.NewRouter()
 
 	init_routes(router)
@@ -88,30 +96,37 @@ func log_request(request *http.Request) {
 	fmt.Println("[" + ft(time.Now()) + "] " + request.RemoteAddr + " " + request.Referer())
 }
 
-func apply_matrix(w http.ResponseWriter, r *http.Request)(pixels []Pixel) {
+func apply_matrix(w http.ResponseWriter, r *http.Request) {
 	var dat []interface{}
 	log_request(r)
-	var pixels map[string]map[string]color.Color
-	var pixels []Pixel
+	pixels := make(map[uint64]map[uint64]color.Color)
 
 	_ = json.NewDecoder(r.Body).Decode(&dat)
 
+	fmt.Println(dat)
+
 	for _, ele := range dat {
 		pxl := ele.(map[string]interface{})
+
+		x, _ := strconv.ParseUint(pxl["x"].(string), 10,8)
+		y, _ := strconv.ParseUint(pxl["y"].(string), 10,8)
+
 		rgb := pxl["color"].(map[string]interface{})
+		if pixels[x] == nil { pixels[x] = make(map[uint64]color.Color) }
+		//pixels[pxl["x"].(string)] = make(map[string]color.Color)
 
-		pixels[pxl["x"].(string)] = map[string]color.Color
-		y, _ := strconv.ParseUint(pxl["y"].(string), 10, 8)
 
-		r, _ := strconv.ParseUint(rgb["r"].(string), 10, 8)
-		g, _ := strconv.ParseUint(rgb["g"].(string), 10, 8)
-		b, _ := strconv.ParseUint(rgb["b"].(string), 10, 8)
+		r, _ := strconv.ParseUint(rgb["r"].(string), 10,8)
+		g, _ := strconv.ParseUint(rgb["g"].(string), 10,8)
+		b, _ := strconv.ParseUint(rgb["b"].(string), 10,8)
 
-		pixels[pxl["x"].(string)][pxl["y"].(string)] = color.RGBA{R:uint8(r),G:uint8(g),B:uint8(b),A:255}
+
+		pixels[x][y] = color.RGBA{R:uint8(r),G:uint8(g),B:uint8(b),A:255}
+		//fmt.Printf("x", x, "y", y,"color",  pixels[x][y],"\t")
+
+		//fmt.Println(pixels[pxl["x"].(string)][pxl["y"].(string)])
 	}
-
-	var canvas = init_canvas(matrix)
-	set_colors(canvas,pixels)
+	set_pixels(pixels)
 }
 
 func save_matrix(w http.ResponseWriter, r *http.Request) {
@@ -127,7 +142,34 @@ func fatal(err error) {
 	}
 }
 
-func init_matrix()(matrix *RGBLedMatrix) {
+func set_pixels(pixels map[uint64]map[uint64]color.Color) {
+	bounds := canvas.Bounds()
+	for x := bounds.Min.X; x < bounds.Max.X; x++ {
+		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+			var pixel_color = pixels[uint64(x)][uint64(y)]
+			canvas.Set(x,y, pixel_color) //color.RGBA{255, 0, 0, 255})
+		}
+	}
+	canvas.Render()
+	time.Sleep(10)
+}
+
+/*func new_matrix()(RGBLedMatrix) {
+	config = init_matrix_config()
+	m, _ := rgbmatrix.NewRGBLedMatrix(&config)
+
+	return m
+}
+
+func new_canvas(matrix RGBLedMatrix)(Canvas) {
+	return rgbmatrix.NewCanvas(matrix)
+}*/
+
+func render() {
+	canvas.Render()
+}
+
+/*func init_matrix_config()(HardwareConfig){
 	config := &rgbmatrix.DefaultConfig
 	config.Rows = *rows
 	config.Cols = *cols
@@ -138,31 +180,9 @@ func init_matrix()(matrix *RGBLedMatrix) {
 	config.ShowRefreshRate = *show_refresh
 	config.InverseColors = *inverse_colors
 	config.DisableHardwarePulsing = *disable_hardware_pulsing
-
-	m, err := rgbmatrix.NewRGBLedMatrix(config)
-
-	fatal(err)
-
-	return m
 }
 
 func init_canvas(matrix RGBLedMatrix)(Canvas) {
 	return  rgbmatrix.NewCanvas(matrix)
 }
-
-func set_colors(canvas &Canvas, pixels ) {
-	bounds := canvas.Bounds()
-
-	for x := bounds.Min.X; x < bounds.Max.X; x++ {
-		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
-			pixel := pixel[string(x)][string(y)]
-			fmt.Println("[%d,%d] %s",x,y,pixel)
-			c.Set(x,y,pixel)
-		}
-	}
-	render(canvas)
-}
-
-func render(canvas &Canvas) {
-	canvas.Render()
-}
+*/

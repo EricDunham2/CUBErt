@@ -98,7 +98,7 @@ function getPixels() {
             let pixel = document.getElementById(id);
             let color = Color.toColor(pixel.style.background);
 
-            pixels.push(new Pixel(x, y, color));
+            pixels.push(new Pixel(y, x, color));
         }
     }
     return pixels;

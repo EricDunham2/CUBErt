@@ -1,0 +1,95 @@
+{{define "indexHTML"}}
+
+<head>
+    <link rel="stylesheet" href="/static/styles/app.css">
+    <link rel="stylesheet" href="/static/styles/material_icons.css">
+    <!--<link rel="stylesheet" href="/static/styles/mat_icons.min.css">
+    <link rel="stylesheet" href="/static/styles/vuetify.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900' rel="stylesheet">
+
+    <!--<link rel="stylesheet" href="/static/styles/materialdesingicons.min.css">-->
+    <script src="/static/scripts/axios.min.js"></script>
+    <script src="/static/scripts/pixel.js"></script>
+    <script src="/static/scripts/led.service.js"></script>
+    <script src="/static/scripts/cubert.service.js"></script>
+    <script src="/static/scripts/jquery-3.3.1-min.js"></script>
+    <script src="/static/scripts/chroma.min.js"></script>
+    <script src="/static/scripts/vue-2.5.17.js"></script>
+    <script src="/static/scripts/helper.js"></script>
+    <script src="/static/scripts/particles.min.js"></script>
+
+    <!--<script src="/static/scripts/vuetify.min.js"></script>
+    <script src="/static/scripts/polyfill.min.js"></script>-->
+
+    <script src="/templates/generate/generate.js"></script>
+    <script src="/templates/create/create.js"></script>
+    <script src="/templates/settings/settings.js"></script>
+    <meta name="viewport" content="width=device-width">
+</head>
+
+<div class="noselect" id="index">
+    <div class="navbar vc l3">
+        <div class="navbar-logo">
+            <div class="navbar-icon vhc">
+                <input id="sidebar-toggle" type="checkbox" role="button" class="toggle-btn" />
+                <label for="sidebar-toggle" class="vhc toggle-ico"><i
+                        class="material-icons icon-xs logo-nav-icon"></i></label>
+                <div class="nav-menu vhc">
+                    <div class="panel col-100">
+                        <div class="panel-content col-100 hc">
+                            <a v-on:click="setComponent('generate')"
+                                class="clickable no-touch-table navbar-menu-item col-100" style="height:60px;"
+                                v-bind:class="{ active: component == 'home' }">
+                                <div class="panel col-100">
+                                    <div class="panel-header tc" style="font-size:25px">Generate</div>
+                                </div>
+                            </a>
+                            <a v-on:click="setComponent('create')"
+                                class="clickable no-touch-table navbar-menu-item col-100" style="height:60px;"
+                                v-bind:class="{ active: component == 'home' }">
+                                <div class="panel col-100">
+                                    <div class="panel-header tc" style="font-size:25px">Create</div>
+                                </div>
+                            </a>
+                            <a v-on:click="setComponent('settings')"
+                                class="clickable no-touch-table navbar-menu-item col-100" style="height:60px;"
+                                v-bind:class="{ active: component == 'settings' }">
+                                <div class="panel col-100">
+                                    <div class="panel-header tc" style="font-size:25px">Settings</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="navbar-navigation vhc">
+            <a v-on:click="setComponent('generate')" class="navbar-item vhc"
+                v-bind:class="{ active: component == 'generate' }">
+                <div class="vhc">Generate</div>
+            </a>
+            <a v-on:click="setComponent('create')" class="navbar-item vhc"
+                v-bind:class="{ active: component == 'create' }">
+                <div class="vhc">Create</div>
+            </a>
+            <a v-on:click="setComponent('settings')" class="navbar-item vhc"
+                v-bind:class="{ active: component == 'settings' }">
+                <div class="vhc">Settings</div>
+            </a>
+        </div>
+        <div class="navbar-controls ">
+            <div class="pull-right">
+                <i style="padding: 5px 10px; cursor: pointer;" class="material-icons icon-xs" @click="turnOff()" v-if="powerState">power_off</i>
+                <i style="padding: 5px 10px; cursor: pointer;" class="material-icons icon-xs" @click="turnOn()" v-if="!powerState">power_on</i>
+            </div>
+        </div>
+    </div>
+    <div class="content vhc">
+        <generate v-if="component == 'generate'"></generate>
+        <create v-if="component == 'create'"></create>
+        <settings v-if="component == 'settings'"></settings>
+    </div>
+</div>
+<script src="/templates/index.js"></script>
+{{end}}

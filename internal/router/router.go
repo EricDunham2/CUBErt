@@ -10,6 +10,7 @@ import (
 	"html/template"
 	"net/http"
 	"../leds"
+	"../painter"
 )
 
 var router *mux.Router
@@ -31,7 +32,8 @@ func addEndpoints() {
 	router.HandleFunc("/setPreset", setPreset).Methods("POST")
 	router.HandleFunc("/off", off).Methods("GET")
 	router.HandleFunc("/on", on).Methods("GET")
-	//router.HandleFunc("/setTransistion", setTransistion).Methods("POST")
+	router.HandleFunc("/setTransistion", setTransistion).Methods("POST")
+	router.HandleFunc("/stopTransistion", stopTransition).Methods("GET")
 }
 
 func addViews() {
@@ -149,4 +151,23 @@ func off(w http.ResponseWriter, r *http.Request) {
 
 func on(w http.ResponseWriter, r *http.Request) {
 	leds.New()
+}
+
+func setTransistion(w http.ResponseWriter, r *http.Request) {
+	body, _ := ioutil.ReadAll(r.Body)
+
+	var data []interface{}
+
+	json.Unmarshal(body, &data)
+
+	var colors []string
+	json.Unmarshal(data[0], &colors)
+
+
+	var colors []string = []string{"#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00"}
+	go painter.Transition(colors, string(data[1]), uint(data[2]), uint(data[3]))
+}
+
+func stopTransition(w http.ResponseWriter, r *http.Request) {
+	painter.stopTransition()
 }

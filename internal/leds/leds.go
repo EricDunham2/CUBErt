@@ -5,6 +5,8 @@ import (
 	"../file"
 	"encoding/json"
 	"github.com/mcuadros/go-rpi-rgb-led-matrix"
+	"fmt"
+	"../painter"
 )
 
 var (
@@ -75,6 +77,7 @@ func Delete() {
 		return
 	}
 
+	painter.StopTransition()
 	powerState = false
 
 	canvas.Close()
@@ -87,13 +90,25 @@ func Save(pxls []Pixel) {
 }
 
 func Load() {
+	var pixels []Pixel
 	dat := file.Read("start")
-	Apply(dat)
+
+	json.Unmarshal(dat, pixels)
+
+	Apply(pixels)
 }
 
 func Apply(data []Pixel) {
 	logger.Log("Applying changes")
 
+	New()
+	painter.StopTransition()
+
+	go paint(data)
+	return
+}
+
+func paint(data []Pixel) {
 	bounds := canvas.Bounds()
 
 	for _, led := range data {

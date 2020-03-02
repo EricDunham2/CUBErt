@@ -169,7 +169,32 @@ Vue.component('generate', {
             return panelNum;
         },
         createTransition() {
-            clearInterval(this.transitionInterval);
+            var colors = [];
+            var payload = [];
+
+            for (var i = 0; i < 6; i++) {
+                var color = window.prompt(`Please enter color #${i+1} in hex format`,"");
+                colors.push(color);
+            }
+
+            var steps = window.prompt(`Please enter number of steps`,"");
+            var stepInterval = window.prompt(`Please enter time between steps`,"");
+
+            payload.push(colors);
+            payload.push(this.gradientMode);
+            payload.push(steps)
+            payload.push(stepInterval);
+
+            this.loading = true
+
+            this.cubertService.setTransition(payload).then(handle)
+
+            function handle(response) {
+                this.loading = false;
+                console.log(response);
+            }
+
+            /*clearInterval(this.transitionInterval);
 
             let start = this.createCube();
             let end = this.createCube();
@@ -218,7 +243,7 @@ Vue.component('generate', {
                         steppingUp = true;
                     }
                 }
-            }, 200);
+            }, 200);*/
         },
         createCube(color1, color2, color3, color4) {
             clearInterval(this.transitionInterval);

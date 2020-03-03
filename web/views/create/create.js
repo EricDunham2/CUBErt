@@ -272,30 +272,8 @@ Vue.component('create', {
         custom_input();
     },
     beforeMount() {
-        var css = '.navbar { background: rgba(0,0,0,.8) !important; } body { background: black;} .nav-menu { background:rgba(0,0,0,.8); }',
-            head = document.head || document.getElementsByTagName('head')[0],
-            style = document.createElement('style');
-        style.id = "removeMe";
-
-        head.appendChild(style);
-
-        style.type = 'text/css';
-
-        if (style.styleSheet) {
-            // This is required for IE8 and below.
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }
-
         this.createMatrix();
         this.selectedPanel = this.panels[0];
-    },
-    beforeDestroy() {
-        var head = document.head;
-        Array.from(head.children).forEach(child => {
-            if (child.id === "removeMe") child.remove()
-        })
     },
     template: `
     <div class="flex-container col-100 vhc">

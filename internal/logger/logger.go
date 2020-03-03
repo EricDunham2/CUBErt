@@ -21,14 +21,14 @@ func format(t time.Time) string {
 }
 
 func Log(message string) {
-
+	message = fmt.Sprintf("[" + format(time.Now()) + "] " + message)
 	fmt.Println(message)
 
 	if len(logs) > 1500 {
 		logs = logs[1:]
 	}
 
-	logs = append(logs, ("[" + format(time.Now()) + "] " + message))
+	logs = append(logs, message)
 }
 
 func GetLogs() []string{

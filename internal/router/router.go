@@ -18,22 +18,25 @@ var router *mux.Router
 func addResources() {
 	resources := packr.NewBox("../../web/static")
 	templates := packr.NewBox("../../web/views")
+	services := packr.NewBox("../../web/services")
 
 	router.PathPrefix("/static").Handler(http.StripPrefix("/static/", http.FileServer(resources)))
 	router.PathPrefix("/templates").Handler(http.StripPrefix("/templates/", http.FileServer(templates)))
+	router.PathPrefix("/services").Handler(http.StripPrefix("/services/", http.FileServer(services)))
 }
 
 func addEndpoints() {
+	router.HandleFunc("/off", off).Methods("GET")
+	router.HandleFunc("/on", on).Methods("GET")
+
 	router.HandleFunc("/getSettings", getSettings).Methods("GET")
 	router.HandleFunc("/setSettings", setSettings).Methods("POST")
 	router.HandleFunc("/setLeds", setLeds).Methods("POST")
 	router.HandleFunc("/getLogs", getLogs).Methods("GET")
 	router.HandleFunc("/getPresets", getPresets).Methods("GET")
 	router.HandleFunc("/setPreset", setPreset).Methods("POST")
-	router.HandleFunc("/off", off).Methods("GET")
-	router.HandleFunc("/on", on).Methods("GET")
-	router.HandleFunc("/setTransistion", setTransistion).Methods("POST")
 	router.HandleFunc("/stopTransistion", stopTransition).Methods("GET")
+	router.HandleFunc("/setTransition", setTransition).Methods("POST")
 }
 
 func addViews() {
@@ -92,6 +95,8 @@ func setSettings(w http.ResponseWriter, r *http.Request) {
 
 	file.Create(string(body), "settings")
 
+	painter.StopTransition()
+
 	leds.Delete()
 	leds.New()
 }
@@ -101,6 +106,8 @@ func setLeds(w http.ResponseWriter, r *http.Request) {
 
 	body, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(body, &pixels)
+
+	painter.StopTransition()
 
 	leds.Save(pixels)
 	leds.Apply(pixels)
@@ -146,14 +153,16 @@ func setPreset(w http.ResponseWriter, r *http.Request) {
 }
 
 func off(w http.ResponseWriter, r *http.Request) {
+	painter.StopTransition()
 	leds.Delete()
 }
 
 func on(w http.ResponseWriter, r *http.Request) {
+	painter.StopTransition()
 	leds.New()
 }
 
-func setTransistion(w http.ResponseWriter, r *http.Request) {
+func setTransition(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
 
 	var data []interface{}
@@ -161,13 +170,27 @@ func setTransistion(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(body, &data)
 
 	var colors []string
-	json.Unmarshal(data[0], &colors)
+	var method string
+	var steps uint
+	var stepDuration uint
+
+	dat, _ := json.Marshal(data[0])
+	json.Unmarshal(dat, &colors)
+
+	dat, _ = json.Marshal(data[1])
+	json.Unmarshal(dat, &method)
+
+	dat, _ = json.Marshal(data[2])
+	json.Unmarshal(dat, &steps)
+
+	dat, _ = json.Marshal(data[3])
+	json.Unmarshal(dat, &stepDuration)
 
 
-	var colors []string = []string{"#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00"}
-	go painter.Transition(colors, string(data[1]), uint(data[2]), uint(data[3]))
+	colors = []string{"#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00"}
+	go painter.Transition(colors, method, steps, stepDuration)
 }
 
 func stopTransition(w http.ResponseWriter, r *http.Request) {
-	painter.stopTransition()
+	painter.StopTransition()
 }

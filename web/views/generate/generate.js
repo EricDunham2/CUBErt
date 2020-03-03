@@ -52,6 +52,7 @@ Vue.component('generate', {
             }
         },
         setPreset() {
+            var vm = this;
             var data = this.bundle(false)
 
             var title = window.prompt("Please enter a title for the current configuration.", "");
@@ -62,9 +63,13 @@ Vue.component('generate', {
 
             this.loading = true;
 
-            this.cubertService.setPreset(payload);
+            this.cubertService.setPreset(payload).then(handle);
 
-            this.loading = false;
+            function handle(response) {
+                this.loading = false;
+                vm.getPresets();
+            }
+
         },
         showCode() {
             this.code = !this.code;
@@ -172,7 +177,7 @@ Vue.component('generate', {
             var colors = [];
             var payload = [];
 
-            for (var i = 0; i < 6; i++) {
+            for (var i = 0; i <= 7; i++) {
                 var color = window.prompt(`Please enter color #${i+1} in hex format`,"");
                 colors.push(color);
             }
@@ -182,12 +187,12 @@ Vue.component('generate', {
 
             payload.push(colors);
             payload.push(this.gradientMode);
-            payload.push(steps)
-            payload.push(stepInterval);
+            payload.push(parseInt(steps));
+            payload.push(parseInt(stepInterval));
 
-            this.loading = true
+            this.loading = true;
 
-            this.cubertService.setTransition(payload).then(handle)
+            this.cubertService.setTransition(payload).then(handle);
 
             function handle(response) {
                 this.loading = false;
@@ -245,6 +250,14 @@ Vue.component('generate', {
                 }
             }, 200);*/
         },
+        customCube() {
+            var color1 = window.prompt(`Please enter color #${1} in hex format`,"");
+            var color2 = window.prompt(`Please enter color #${2} in hex format`,"");
+            var color3 = window.prompt(`Please enter color #${3} in hex format`,"");
+            var color4 = window.prompt(`Please enter color #${4} in hex format`,"");
+
+            this.createCube(color1, color2, color3, color4);
+        },
         createCube(color1, color2, color3, color4) {
             clearInterval(this.transitionInterval);
 
@@ -276,30 +289,7 @@ Vue.component('generate', {
         this.createCube();
     },
     beforeMount() {
-        var css = '.navbar { background: rgba(0,0,0,.8) !important; } body { background: black;} .nav-menu { background:rgba(0,0,0,.8); }',
-            head = document.head || document.getElementsByTagName('head')[0],
-            style = document.createElement('style');
-        style.id = "removeMe";
-
-        head.appendChild(style);
-
-        style.type = 'text/css';
-        this.getPresets();
-
-        if (style.styleSheet) {
-            // This is required for IE8 and below.
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }
-
         this.createMatrix();
-    },
-    beforeDestroy() {
-        var head = document.head;
-        Array.from(head.children).forEach(child => {
-            if (child.id === "removeMe") child.remove()
-        })
     },
     template: `
     <div class="flex-container col-100 vhc">
@@ -378,6 +368,9 @@ Vue.component('generate', {
                             <div class="col-100 vhc">
                                 <label for="cube" class="toggle-lbl vh-center" @click="createCube()">
                                     <span class="v-center" style="text-transform: uppercase;">Cube</span>
+                                </label>
+                                <label for="transition" class="toggle-lbl vh-center" @click="customCube()">
+                                    <span class="v-center" style="text-transform: uppercase;">Custom Cube</span>
                                 </label>
                                 <label for="transition" class="toggle-lbl vh-center" @click="createTransition()">
                                     <span class="v-center" style="text-transform: uppercase;">Transition</span>

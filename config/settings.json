@@ -1,1 +1,1 @@
-{"rows":32,"cols":32,"parallel":2,"chained":6,"brightness":100,"hardware_mapping":"adafruit-hat-pwm","show_refresh":false,"inverse_colors":false,"disable_hardware_pulsing":false}
+{"rows":32, "cols":32, "parallel":1, "chained":6, "brightness":100, "hardware_mapping":"adafruit-hat-pwm","show_refresh":false, "inverse_colors":false, "disable_hardware_pulsing":false }

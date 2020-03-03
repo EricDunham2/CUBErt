@@ -5,7 +5,6 @@ import (
 	"../file"
 	"encoding/json"
 	"github.com/mcuadros/go-rpi-rgb-led-matrix"
-	"fmt"
 	"../painter"
 )
 
@@ -109,6 +108,7 @@ func Apply(data []Pixel) {
 }
 
 func paint(data []Pixel) {
+	logger.Log("Painting started...")
 	bounds := canvas.Bounds()
 
 	for _, led := range data {
@@ -116,6 +116,7 @@ func paint(data []Pixel) {
 	}
 
 	canvas.Render()
+	logger.Log("Painting finished...")
 }
 
 func SetSettings(s Settings) {

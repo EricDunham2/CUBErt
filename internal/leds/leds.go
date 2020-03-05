@@ -5,19 +5,20 @@ import (
 	"../file"
 	"encoding/json"
 	"github.com/mcuadros/go-rpi-rgb-led-matrix"
-	"../painter"
+	"image/color"
+	//"../painter"
 )
 
 var (
 	powerState	bool
 	canvas		*rgbmatrix.Canvas
-	config		HardwareConfig
+	config		rgbmatrix.HardwareConfig
 	settings	*Settings
 )
 
 type Pixel struct {
-	X  uint8  `json:"x"`
-	Y  uint8  `json:"y"`
+	X  int  `json:"x"`
+	Y  int  `json:"y"`
 	R  uint8  `json:"r"`
 	G  uint8  `json:"g"`
 	B  uint8  `json:"b"`
@@ -76,7 +77,7 @@ func Delete() {
 		return
 	}
 
-	painter.StopTransition()
+	//painter.StopTransition()
 	powerState = false
 
 	canvas.Close()
@@ -101,7 +102,7 @@ func Apply(data []Pixel) {
 	logger.Log("Applying changes")
 
 	New()
-	painter.StopTransition()
+	//painter.StopTransition()
 
 	go paint(data)
 	return
@@ -109,10 +110,10 @@ func Apply(data []Pixel) {
 
 func paint(data []Pixel) {
 	logger.Log("Painting started...")
-	bounds := canvas.Bounds()
+	//bounds := canvas.Bounds()
 
 	for _, led := range data {
-		canvas.Set(led.x, led.y, colorRGBA{led.R, led.G, led.B, 255})
+		canvas.Set(led.X, led.Y, color.RGBA{R:led.R, G:led.G, B:led.B, A:255})
 	}
 
 	canvas.Render()

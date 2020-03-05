@@ -187,7 +187,7 @@ func setTransition(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(dat, &stepDuration)
 
 
-	colors = []string{"#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00"}
+	//colors = []string{"#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00"}
 	go painter.Transition(colors, method, steps, stepDuration)
 }
 

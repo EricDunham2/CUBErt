@@ -42,12 +42,12 @@ func Transition(colors []string, method string, steps uint, stepDuration uint) {
 		blend4 := Blend(method, c4, c8, step, steps)
 
 
-		var top []leds.Pixel = BilinearGradient(blend1, blend2, blend3, blend4, method)
-		var front []leds.Pixel = LinearGradient(blend1, blend2, method)
-		var left []leds.Pixel = LinearGradient(blend2, blend3, method)
-		var back []leds.Pixel = LinearGradient(blend3, blend4, method)
-		var right []leds.Pixel = LinearGradient(blend4, blend1, method)
-		var bottom []leds.Pixel = BilinearGradient(blend4, blend1, blend2, blend3, method)
+		var top []leds.Pixel = BilinearGradient(blend1, blend2, blend3, blend4, method, 0)
+		var front []leds.Pixel = LinearGradient(blend1, blend2, method, 1)
+		var left []leds.Pixel = LinearGradient(blend2, blend3, method, 2)
+		var back []leds.Pixel = LinearGradient(blend3, blend4, method, 3)
+		var right []leds.Pixel = LinearGradient(blend4, blend1, method, 4)
+		var bottom []leds.Pixel = BilinearGradient(blend4, blend1, blend2, blend3, method, 5)
 
 		pixels = append(pixels, top...)
 		pixels = append(pixels, front...)
@@ -94,7 +94,7 @@ func Blend(method string, c1 colorful.Color, c2 colorful.Color, step uint, steps
 	return color
 }
 
-func BilinearGradient(c1 colorful.Color, c2 colorful.Color, c3 colorful.Color, c4 colorful.Color, method string) []leds.Pixel {
+func BilinearGradient(c1 colorful.Color, c2 colorful.Color, c3 colorful.Color, c4 colorful.Color, method string, offset int) []leds.Pixel {
 	var pixels []leds.Pixel
 
 	settings := leds.GetSettings()
@@ -110,14 +110,14 @@ func BilinearGradient(c1 colorful.Color, c2 colorful.Color, c3 colorful.Color, c
 			blend := Blend(method, blend5, blend6, uint(col), uint(cols))
 			r,g,b := blend.RGB255()
 			
-			pixels = append(pixels, leds.Pixel{X: uint8(row), Y: uint8(col), R: r, G: g, B: b})
+			pixels = append(pixels, leds.Pixel{X: row + (rows * offset), Y: col, R: r, G: g, B: b})
 		}
 	}
 
 	return pixels
 }
 
-func LinearGradient(c1 colorful.Color, c2 colorful.Color, method string) []leds.Pixel {
+func LinearGradient(c1 colorful.Color, c2 colorful.Color, method string, offset int) []leds.Pixel {
 	var pixels []leds.Pixel
 
 	settings := leds.GetSettings()
@@ -130,7 +130,7 @@ func LinearGradient(c1 colorful.Color, c2 colorful.Color, method string) []leds.
 		r, g, b := blend.RGB255()
 
 		for col := 0; col < cols; col++ {
-			pixels = append(pixels, leds.Pixel{X: uint8(row), Y: uint8(col), R: r, G: g, B: b})
+			pixels = append(pixels, leds.Pixel{X:row + (rows * offset), Y: col, R: r, G: g, B: b})
 		}
 	}
 

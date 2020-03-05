@@ -279,13 +279,14 @@ Vue.component('generate', {
             this.linearGradient(color2, color3, 2);
             this.linearGradient(color3, color4, 3);
             this.linearGradient(color4, color1, 4);
-            this.cubeGradient(color4, color1, color2, color3, 5);
+            this.cubeGradient(color1, color4, color3, color2, 5);
 
             return [color1, color2, color3, color4];
         }
     },
     mounted() {
         custom_input();
+	this.getPresets();
         this.createCube();
     },
     beforeMount() {

@@ -179,6 +179,9 @@ Vue.component('generate', {
 
             for (var i = 0; i <= 7; i++) {
                 var color = window.prompt(`Please enter color #${i+1} in hex format`,"");
+
+                if (!color) { return }
+
                 colors.push(color);
             }
 
@@ -191,6 +194,8 @@ Vue.component('generate', {
             payload.push(parseInt(stepInterval));
 
             this.loading = true;
+
+            if (!colors || !this.gradientMode || !parseInt(steps) || !parseInt(stepInterval)) { return; }
 
             this.cubertService.setTransition(payload).then(handle);
 

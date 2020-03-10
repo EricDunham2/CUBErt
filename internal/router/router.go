@@ -10,7 +10,6 @@ import (
 	"html/template"
 	"net/http"
 	"../leds"
-	"../painter"
 )
 
 var router *mux.Router
@@ -61,7 +60,8 @@ func StartServer(port string) {
 	addEndpoints()
 	addViews()
 
-	canvas := leds.New()
+	canvas := leds.InitCanvas()
+
 	leds.Load()
 	leds.LoadSettings()
 
@@ -81,24 +81,8 @@ func getSettings(w http.ResponseWriter, r *http.Request) {
 
 func setSettings(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
+	led.setSettings(body)
 
-	exists := file.Exists("settings")
-
-	if exists == true {
-		err := file.Remove("settings")
-
-		if err != nil {
-			logger.Log(err.Error())
-			logger.Log("Error removing file...")
-		}
-	}
-
-	file.Create(string(body), "settings")
-
-	painter.StopTransition()
-
-	leds.Delete()
-	leds.New()
 }
 
 func setLeds(w http.ResponseWriter, r *http.Request) {
@@ -106,8 +90,6 @@ func setLeds(w http.ResponseWriter, r *http.Request) {
 
 	body, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(body, &pixels)
-
-	painter.StopTransition()
 
 	leds.Save(pixels)
 	leds.Apply(pixels)
@@ -153,13 +135,12 @@ func setPreset(w http.ResponseWriter, r *http.Request) {
 }
 
 func off(w http.ResponseWriter, r *http.Request) {
-	painter.StopTransition()
 	leds.Delete()
 }
 
 func on(w http.ResponseWriter, r *http.Request) {
-	painter.StopTransition()
 	leds.New()
+	leds.Load()
 }
 
 func setTransition(w http.ResponseWriter, r *http.Request) {
@@ -188,9 +169,9 @@ func setTransition(w http.ResponseWriter, r *http.Request) {
 
 
 	//colors = []string{"#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00"}
-	go painter.Transition(colors, method, steps, stepDuration)
+	leds.Transition(colors, method, steps, stepDuration)
 }
 
 func stopTransition(w http.ResponseWriter, r *http.Request) {
-	painter.StopTransition()
+	leds.StopTransition()
 }

@@ -112,7 +112,7 @@ Vue.component('create', {
 
             this.loading = true;
 
-            ledService.apply(payload).then(handle);
+            this.ledService.apply(payload).then(handle);
         },
         imagePaint(uri) {
             var i = new Image();
@@ -399,10 +399,10 @@ Vue.component('create', {
                                 <label for="new" class="toggle-lbl vh-center" @click="createMatrix()">
                                     <span class="v-center" style="text-transform: uppercase;">New</span>
                                 </label>
-                                <label for="apply" class="toggle-lbl vh-center" @click="deletePanel()">
+                                <label for="delete" class="toggle-lbl vh-center" @click="deletePanel()">
                                     <span class="v-center" style="text-transform: uppercase;">Delete</span>
                                 </label>
-                                <label for="apply" class="toggle-lbl vh-center" @click="setPreset()">
+                                <label for="save" class="toggle-lbl vh-center" @click="setPreset()">
                                     <span class="v-center" style="text-transform: uppercase;">Save</span>
                                 </label>
                                 <label for="clear" class="toggle-lbl vh-center" @click="clear()">

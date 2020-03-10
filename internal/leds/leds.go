@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"github.com/mcuadros/go-rpi-rgb-led-matrix"
 	"image/color"
-	//"../painter"
 )
 
 var (
@@ -57,27 +56,35 @@ func initMatrix() rgbmatrix.Matrix {
 	return m
 }
 
-func New() *rgbmatrix.Canvas {
+func New() {
+	StopTransition()
+
+	if (!powerState) {
+		InitCanvas()
+		powerState = true;
+	}
+}
+
+func InitCanvas() *rgbmatrix.Canvas {
+	StopTransition()
 
 	if powerState == true { return canvas }
-	
+
 	powerState = true
 
-	LoadSettings()
 	m := initMatrix()
 	canvas = rgbmatrix.NewCanvas(m)
-
-	Load()
 
 	return canvas
 }
 
 func Delete() {
+	StopTransition()
+
 	if powerState == false {
 		return
 	}
 
-	//painter.StopTransition()
 	powerState = false
 
 	canvas.Close()
@@ -99,12 +106,13 @@ func Load() {
 }
 
 func Apply(data []Pixel) {
+	StopTransition()
+
 	logger.Log("Applying changes")
 
 	New()
-	//painter.StopTransition()
 
-	go paint(data)
+	paint(data)
 	return
 }
 
@@ -120,8 +128,26 @@ func paint(data []Pixel) {
 	logger.Log("Painting finished...")
 }
 
-func SetSettings(s Settings) {
-	settings = &s
+func SetSettings(dat []byte) {
+	StopTransition()
+
+	ns = &Settings{}
+	json.Unmarshal(dat, ns)
+
+	settings = &ns
+
+	exists := file.Exists("settings")
+
+	if exists == true {
+		err := file.Remove("settings")
+
+		if err != nil {
+			logger.Log(err.Error())
+			logger.Log("Error removing file...")
+		}
+	}
+
+	file.Create(string(dat), "settings")
 
 	Delete()
 	New()

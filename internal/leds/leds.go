@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/mcuadros/go-rpi-rgb-led-matrix"
 	"image/color"
+	"fmt"
 )
 
 var (
@@ -57,16 +58,18 @@ func initMatrix() rgbmatrix.Matrix {
 }
 
 func New() {
-	StopTransition()
+	//StopTransition()
 
 	if (!powerState) {
 		InitCanvas()
 		powerState = true;
 	}
+
+	Load()
 }
 
 func InitCanvas() *rgbmatrix.Canvas {
-	StopTransition()
+	//StopTransition()
 
 	if powerState == true { return canvas }
 
@@ -79,7 +82,7 @@ func InitCanvas() *rgbmatrix.Canvas {
 }
 
 func Delete() {
-	StopTransition()
+	//StopTransition()
 
 	if powerState == false {
 		return
@@ -101,16 +104,18 @@ func Load() {
 	dat := file.Read("start")
 
 	json.Unmarshal(dat, pixels)
+	
+	fmt.Println(pixels)
 
 	Apply(pixels)
 }
 
 func Apply(data []Pixel) {
-	StopTransition()
+	//StopTransition()
 
 	logger.Log("Applying changes")
 
-	New()
+	//New()
 
 	paint(data)
 	return
@@ -129,12 +134,12 @@ func paint(data []Pixel) {
 }
 
 func SetSettings(dat []byte) {
-	StopTransition()
+	//StopTransition()
 
-	ns = &Settings{}
+	ns := &Settings{}
 	json.Unmarshal(dat, ns)
 
-	settings = &ns
+	settings = ns
 
 	exists := file.Exists("settings")
 

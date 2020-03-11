@@ -4,16 +4,16 @@ import (
 	"github.com/lucasb-eyer/go-colorful"
 	"../logger"
 	"time"
-	"sync"
 )
 
 var (
-	wg sync.WaitGroup
-	ch chan bool
+	stop bool
 )
 
 func Transition(colors []string, method string, steps uint, stepDuration uint) {
 	StopTransition()
+
+	stop = false
 
 	c1, _ := colorful.Hex(colors[0])
 	c2, _ := colorful.Hex(colors[1])
@@ -30,54 +30,46 @@ func Transition(colors []string, method string, steps uint, stepDuration uint) {
 	var step uint = 0;
 	var desc = false
 
-	wg.Add(1)
+	for {
 
-	ch = make(chan bool)
-
-	go func() {
-		for {
-			conti, ok := <- ch
-
-			if !ok {
-				logger.Log("Closing Transition Loop")
-				wg.Done()
-				return
-			}
-
-			blend1 := Blend(method, c1, c5, step, steps)
-			blend2 := Blend(method, c2, c6, step, steps)
-			blend3 := Blend(method, c3, c7, step, steps)
-			blend4 := Blend(method, c4, c8, step, steps)
-
-			var top []Pixel = BilinearGradient(blend1, blend2, blend3, blend4, method, 0)
-			var front []Pixel = LinearGradient(blend1, blend2, method, 1)
-			var left []Pixel = LinearGradient(blend2, blend3, method, 2)
-			var back []Pixel = LinearGradient(blend3, blend4, method, 3)
-			var right []Pixel = LinearGradient(blend4, blend1, method, 4)
-			var bottom []Pixel = BilinearGradient(blend1, blend4, blend3, blend2, method, 5)
-
-			pixels = append(pixels, top...)
-			pixels = append(pixels, front...)
-			pixels = append(pixels, left...)
-			pixels = append(pixels, back...)
-			pixels = append(pixels, right...)
-			pixels = append(pixels, bottom...)
-
-			Apply(pixels)
-
-			if (desc && step > 0) {
-				step--
-			} else if (!desc && step < steps) {
-				if step == steps {
-					desc = true
-				} else {
-					step++
-				}
-			}
-
-			time.Sleep(time.Duration(stepDuration) * time.Millisecond)
+		if stop {
+			logger.Log("Closing Transition Loop")
+			return
 		}
-	}()
+
+		blend1 := Blend(method, c1, c5, step, steps)
+		blend2 := Blend(method, c2, c6, step, steps)
+		blend3 := Blend(method, c3, c7, step, steps)
+		blend4 := Blend(method, c4, c8, step, steps)
+
+		var top []Pixel = BilinearGradient(blend1, blend2, blend3, blend4, method, 0)
+		var front []Pixel = LinearGradient(blend1, blend2, method, 1)
+		var left []Pixel = LinearGradient(blend2, blend3, method, 2)
+		var back []Pixel = LinearGradient(blend3, blend4, method, 3)
+		var right []Pixel = LinearGradient(blend4, blend1, method, 4)
+		var bottom []Pixel = BilinearGradient(blend1, blend4, blend3, blend2, method, 5)
+
+		pixels = append(pixels, top...)
+		pixels = append(pixels, front...)
+		pixels = append(pixels, left...)
+		pixels = append(pixels, back...)
+		pixels = append(pixels, right...)
+		pixels = append(pixels, bottom...)
+
+		Apply(pixels)
+
+		if (desc && step > 0) {
+			step--
+		} else if (!desc && step < steps) {
+			if step == steps {
+				desc = true
+			} else {
+				step++
+			}
+		}
+
+		time.Sleep(time.Duration(stepDuration) * time.Millisecond)
+	}
 }
 
 func Blend(method string, c1 colorful.Color, c2 colorful.Color, step uint, steps uint) colorful.Color {
@@ -145,6 +137,5 @@ func LinearGradient(c1 colorful.Color, c2 colorful.Color, method string, offset 
 }
 
 func StopTransition() {
-	close(false)
-	wg.Wait()
+	stop = true
 }

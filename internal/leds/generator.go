@@ -6,8 +6,14 @@ import (
 	"time"
 )
 
+var (
+	stop bool
+)
+
 func Transition(colors []string, method string, steps uint, stepDuration uint) {
 	StopTransition()
+
+	stop = false
 
 	c1, _ := colorful.Hex(colors[0])
 	c2, _ := colorful.Hex(colors[1])
@@ -23,7 +29,6 @@ func Transition(colors []string, method string, steps uint, stepDuration uint) {
 	var pixels []Pixel
 	var step uint = 0
 	var desc = false
-	var stop = false
 
 	for {
 

@@ -31,6 +31,10 @@ func Transition(colors []string, method string, steps uint, stepDuration uint) {
 	var desc = false
 
 	for {
+		if stop {
+			logger.Log("Closing Transition Loop")
+			return
+		}
 
 		blend1 := Blend(method, c1, c5, step, steps)
 		blend2 := Blend(method, c2, c6, step, steps)
@@ -52,10 +56,6 @@ func Transition(colors []string, method string, steps uint, stepDuration uint) {
 		pixels = append(pixels, bottom...)
 
 		Apply(pixels)
-
-		if stop {
-			return;
-		}
 
 		if (desc && step > 0) {
 			step--
@@ -136,5 +136,6 @@ func LinearGradient(c1 colorful.Color, c2 colorful.Color, method string, offset 
 }
 
 func StopTransition() {
-	stop = true;
+	stop = true
 }
+

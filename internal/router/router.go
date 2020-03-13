@@ -60,10 +60,10 @@ func StartServer(port string) {
 	addEndpoints()
 	addViews()
 
+	leds.LoadSettings()
 	canvas := leds.InitCanvas()
 
 	leds.Load()
-	leds.LoadSettings()
 
 	defer canvas.Close()
 
@@ -169,7 +169,7 @@ func setTransition(w http.ResponseWriter, r *http.Request) {
 
 
 	//colors = []string{"#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00"}
-	leds.Transition(colors, method, steps, stepDuration)
+	go leds.Transition(colors, method, steps, stepDuration)
 }
 
 func stopTransition(w http.ResponseWriter, r *http.Request) {

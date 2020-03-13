@@ -20,10 +20,6 @@ Vue.component('generate', {
     },
     methods: {
         applyPreset() {
-            this.selectedPreset;
-
-            var panels = [];
-
             this.selectedPreset.forEach(pre => {
                 let panel = Math.floor(pre.x / this.settings.rows);
                 let pRow = pre.x - (this.settings.rows * panel);
@@ -110,12 +106,16 @@ Vue.component('generate', {
             var payload = this.bundle();
 
             this.loading = true;
+            this.cubertService.stopTransition().then(sendLeds);
 
-            this.ledService.apply(payload).then(handle);
+            function sendLeds() {
+                var self = vm;
+                vm.ledService.apply(payload).then(handle);
 
-            function handle(response) {
-                console.log(response)
-                vm.loading = false;
+                function handle(response) {
+                    console.log(response)
+                    self.loading = false;
+                }
             }
         },
         linearGradient(c1, c2, panel) {
@@ -176,19 +176,13 @@ Vue.component('generate', {
         createTransition() {
             var colors = [];
             var payload = [];
+            var vm = this;
 
-            for (var i = 0; i <= 7; i++) {
-                var color = window.prompt(`Please enter color #${i+1} in hex format`,"");
-
-                if (!color) { return }
-
-                colors.push(color);
-            }
-
+            var colors = window.prompt(`Please enter the colors in hex and csv format`, "")
             var steps = window.prompt(`Please enter number of steps`,"");
             var stepInterval = window.prompt(`Please enter time between steps`,"");
 
-            payload.push(colors);
+            payload.push(colors.split(","));
             payload.push(this.gradientMode);
             payload.push(parseInt(steps));
             payload.push(parseInt(stepInterval));
@@ -197,13 +191,17 @@ Vue.component('generate', {
 
             if (!colors || !this.gradientMode || !parseInt(steps) || !parseInt(stepInterval)) { return; }
 
-            this.cubertService.setTransition(payload).then(handle);
+            this.cubertService.stopTransition().then(setTransition);
 
-            function handle(response) {
-                this.loading = false;
-                console.log(response);
+            function setTransition() {
+                var self = vm;
+                vm.cubertService.setTransition(payload).then(handle);
+
+                function handle(response) {
+                    self.loading = false;
+                    console.log(response);
+                }
             }
-
             /*clearInterval(this.transitionInterval);
 
             let start = this.createCube();
@@ -337,7 +335,7 @@ Vue.component('generate', {
                 </div>
             </div>
         </template>
-        <div class="footer vhc" style="position:sticky; height:250px; overflow:scroll; background:#112;">
+        <div class="footer vhc" style="position:sticky; height:250px; overflow-y:scroll; background:#112;">
             <div class="vhc col-100">
                 <div style="height:230px; position:relative; top: 20px;" class="col-100">
                     <div class="panel col-100">
@@ -388,7 +386,7 @@ Vue.component('generate', {
                         <div class="panel-header tc">Actions</div>
                         <div class="panel-content vhc">
                             <div class="btn-group col-100">
-                                <label for="apply" class="toggle-lbl vh-center" @click="setPreset()">
+                                <label for="setPreset" class="toggle-lbl vh-center" @click="setPreset()">
                                     <span class="v-center" style="text-transform: uppercase;">Save</span>
                                 </label>
                                 <label for="apply" class="toggle-lbl vh-center" @click="apply()">

@@ -35,10 +35,10 @@
         });
      }
  
-     stopTransition(data) {
+     stopTransition() {
         return new Promise(function (resolve, reject) {
             axios
-                .post("/stopTransition", JSON.stringify(data))
+                .get("/stopTransition")
                 .then(handle);
 
             function handle(response) {

@@ -34,7 +34,7 @@ func addEndpoints() {
 	router.HandleFunc("/getLogs", getLogs).Methods("GET")
 	router.HandleFunc("/getPresets", getPresets).Methods("GET")
 	router.HandleFunc("/setPreset", setPreset).Methods("POST")
-	router.HandleFunc("/stopTransistion", stopTransition).Methods("GET")
+	router.HandleFunc("/stopTransition", stopTransition).Methods("GET")
 	router.HandleFunc("/setTransition", setTransition).Methods("POST")
 }
 
@@ -81,7 +81,7 @@ func getSettings(w http.ResponseWriter, r *http.Request) {
 
 func setSettings(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
-	led.setSettings(body)
+	leds.SetSettings(body)
 
 }
 
@@ -173,5 +173,5 @@ func setTransition(w http.ResponseWriter, r *http.Request) {
 }
 
 func stopTransition(w http.ResponseWriter, r *http.Request) {
-	leds.StopTransition()
+	go leds.StopTransition()
 }

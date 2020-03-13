@@ -111,8 +111,17 @@ Vue.component('create', {
             var payload = this.bundle(true);
 
             this.loading = true;
+            this.cubertService.stopTransition().then(ledApply);
 
-            this.ledService.apply(payload).then(handle);
+            function ledApply() {
+                var self = vm;
+                vm.ledService.apply(payload).then(handle);
+
+                function handle(response) {
+                    self.loading = false;
+                    console.log(response);
+                }
+            }
         },
         imagePaint(uri) {
             var i = new Image();
@@ -316,7 +325,7 @@ Vue.component('create', {
                 </div>
             </div>
         </template>
-        <div class="footer vhc" style="position:fixed; height:250px; overflow:scroll; background:#112;">
+        <div class="footer vhc" style="position:fixed; height:250px; overflow-y:scroll; background:#112;">
             <div class="vhc col-100">
                 <div style="height:230px; position:relative; top: 20px;" class="col-100">
                     <div class="panel col-100">

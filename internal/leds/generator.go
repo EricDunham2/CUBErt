@@ -10,6 +10,7 @@ var (
 	stop bool
 )
 
+//TODO Seperate the part that gets the cube parts and return the pixels
 func Transition(colors []string, method string, steps uint, stepDuration uint) {
 	StopTransition()
 
@@ -41,26 +42,17 @@ func Transition(colors []string, method string, steps uint, stepDuration uint) {
 		blend3 := Blend(method, c3, c7, step, steps)
 		blend4 := Blend(method, c4, c8, step, steps)
 
-		var top []Pixel = BilinearGradient(blend1, blend2, blend3, blend4, method, 0)
-		var front []Pixel = LinearGradient(blend1, blend2, method, 1)
-		var left []Pixel = LinearGradient(blend2, blend3, method, 2)
-		var back []Pixel = LinearGradient(blend3, blend4, method, 3)
-		var right []Pixel = LinearGradient(blend4, blend1, method, 4)
-		var bottom []Pixel = BilinearGradient(blend1, blend4, blend3, blend2, method, 5)
-
-		pixels = append(pixels, top...)
-		pixels = append(pixels, front...)
-		pixels = append(pixels, left...)
-		pixels = append(pixels, back...)
-		pixels = append(pixels, right...)
-		pixels = append(pixels, bottom...)
-
+		pixels = Cube(blend1, blend2, blend3, blend4, method)
 		Apply(pixels)
 
-		if (desc && step > 0) {
-			step--
-		} else if (!desc && step < steps) {
-			if step == steps {
+		if (desc) {
+			if (step <= 0) {
+				desc = false
+			} else {
+				step--
+			}
+		} else {
+			if (step >= steps){
 				desc = true
 			} else {
 				step++
@@ -69,6 +61,26 @@ func Transition(colors []string, method string, steps uint, stepDuration uint) {
 
 		time.Sleep(time.Duration(stepDuration) * time.Millisecond)
 	}
+}
+
+func Cube(blend1 colorful.Color, blend2 colorful.Color, blend3 colorful.Color, blend4 colorful.Color, method string) []Pixel{
+	var pixels []Pixel
+	
+	var top []Pixel = BilinearGradient(blend1, blend2, blend3, blend4, method, 0)
+	var front []Pixel = LinearGradient(blend1, blend2, method, 1)
+	var left []Pixel = LinearGradient(blend2, blend3, method, 2)
+	var back []Pixel = LinearGradient(blend3, blend4, method, 3)
+	var right []Pixel = LinearGradient(blend4, blend1, method, 4)
+	var bottom []Pixel = BilinearGradient(blend1, blend4, blend3, blend2, method, 5)
+
+	pixels = append(pixels, top...)
+	pixels = append(pixels, front...)
+	pixels = append(pixels, left...)
+	pixels = append(pixels, back...)
+	pixels = append(pixels, right...)
+	pixels = append(pixels, bottom...)
+
+	return pixels
 }
 
 func Blend(method string, c1 colorful.Color, c2 colorful.Color, step uint, steps uint) colorful.Color {

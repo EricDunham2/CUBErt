@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"github.com/mcuadros/go-rpi-rgb-led-matrix"
 	"image/color"
-	"fmt"
 )
 
 var (
@@ -103,9 +102,7 @@ func Load() {
 	var pixels []Pixel
 	dat := file.Read("start")
 
-	json.Unmarshal(dat, pixels)
-	
-	fmt.Println(pixels)
+	json.Unmarshal(dat, &pixels)
 
 	Apply(pixels)
 }

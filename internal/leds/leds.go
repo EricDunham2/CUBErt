@@ -26,7 +26,8 @@ type Pixel struct {
 
 type Favorite struct {
 	Title	string	`json:"title"`
-	Pixels	[]Pixel	`json:"pixels"`
+	Colors	string	`json:"colors"`
+	Mode	string	`json:"mode"`
 }
 
 type Settings struct {

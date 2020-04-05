@@ -11,6 +11,7 @@ Vue.component('generate', {
             gradientMode: "rgb",
             cubertService: new CubertService(),
             ledService: new LedService(),
+            currentColors: [],
             settings: {
                 rows: 32,
                 cols: 32,
@@ -20,12 +21,17 @@ Vue.component('generate', {
     },
     methods: {
         applyPreset() {
-            this.selectedPreset.forEach(pre => {
+            /*this.selectedPreset.forEach(pre => {
                 let panel = Math.floor(pre.x / this.settings.rows);
                 let pRow = pre.x - (this.settings.rows * panel);
 
                 this.panels[panel][pRow][pre.y].setColor(pre.r, pre.g, pre.b);
-            });
+            });*/
+
+            var colors = this.selectedPreset.colors;
+            this.gradientMode = this.selectedPreset.mode;
+
+            this.createCube(colors[0], colors[1], colors[2], colors[3]);
 
             this.$forceUpdate();
         },
@@ -49,12 +55,16 @@ Vue.component('generate', {
         },
         setPreset() {
             var vm = this;
-            var data = this.bundle(false)
+            var data = {}; //this.bundle(false)
+
+            data.colors = this.currentColors;
+            data.mode = this.gradientMode.toLowerCase();
 
             var title = window.prompt("Please enter a title for the current configuration.", "");
             var payload = {
                 "title": title,
-                "pixels": data
+                "colors": JSON.stringify(this.currentColors),
+                "mode": this.gradientMode
             };
 
             this.loading = true;
@@ -120,7 +130,7 @@ Vue.component('generate', {
         },
         linearGradient(c1, c2, panel) {
             var pixels = this.panels[panel];
-            var calcGradient = chroma.scale([c1, c2]).domain([0, this.settings.rows]).mode(this.gradientMode);
+            var calcGradient = chroma.scale([c1, c2]).domain([0, this.settings.rows]).mode(this.gradientMode.toLowerCase());
 
             Object.keys(pixels).forEach(row => {
                 var color = calcGradient(row);
@@ -136,14 +146,14 @@ Vue.component('generate', {
             //this.gradientMode = "hsv"
 
             var pixels = this.panels[panel];
-            var calcGradientX1 = chroma.scale([c1, c2]).domain([0, this.settings.rows - 1]).mode(this.gradientMode);
-            var calcGradientX2 = chroma.scale([c4, c3]).domain([0, this.settings.rows - 1]).mode(this.gradientMode);
+            var calcGradientX1 = chroma.scale([c1, c2]).domain([0, this.settings.rows - 1]).mode(this.gradientMode.toLowerCase());
+            var calcGradientX2 = chroma.scale([c4, c3]).domain([0, this.settings.rows - 1]).mode(this.gradientMode.toLowerCase());
 
             Object.keys(pixels).forEach(row => {
                 var x1 = calcGradientX1(row);
                 var x2 = calcGradientX2(row);
 
-                var calcGradientY = chroma.scale([x1, x2]).domain([0, this.settings.rows]).mode(this.gradientMode);
+                var calcGradientY = chroma.scale([x1, x2]).domain([0, this.settings.rows]).mode(this.gradientMode.toLowerCase());
 
                 Object.keys(pixels[row]).forEach(col => {
                     //var x3 = chroma.mix(x1,x2,col/32, this.gradientMode)
@@ -183,7 +193,7 @@ Vue.component('generate', {
             var stepInterval = window.prompt(`Please enter time between steps`,"");
 
             payload.push(colors.split(","));
-            payload.push(this.gradientMode);
+            payload.push(this.gradientMode.toLowerCase());
             payload.push(parseInt(steps));
             payload.push(parseInt(stepInterval));
 
@@ -259,10 +269,25 @@ Vue.component('generate', {
             var color3 = window.prompt(`Please enter color #${3} in hex format`,"");
             var color4 = window.prompt(`Please enter color #${4} in hex format`,"");
 
+            this.currentColors = [];
+
+            this.currentColors.push(color1);
+            this.currentColors.push(color2);
+            this.currentColors.push(color3);
+            this.currentColors.push(color4);
+
             this.createCube(color1, color2, color3, color4);
         },
         createCube(color1, color2, color3, color4) {
             clearInterval(this.transitionInterval);
+
+            this.currentColors = [];
+
+            this.currentColors.push(color1);
+            this.currentColors.push(color2);
+            this.currentColors.push(color3);
+            this.currentColors.push(color4);
+
 
             if (this.panels.length < 6) {
                 var numOfPanelsNeeded = 6 - this.panels.length;

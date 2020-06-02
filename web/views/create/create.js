@@ -5,8 +5,11 @@ Vue.component('create', {
             mouseState: false,
             selectedColor: "#FFF",
             selectedColor2: "#FFF",
+            selectedColor3: "#FFF",
+            selectedColor4: "#FFF",
             selectedBrushSize: 3,
             gradiBrush: false,
+            biliGradient: false,
             circularGradient: false,
             uploadedImage: null,
             gradientMode: "rgb",
@@ -59,6 +62,19 @@ Vue.component('create', {
 
             return val._rgb;
         },
+        biliGradientCalculator(x, y) {
+            var domain = Object.keys(this.selectedPanel).length - 1;
+
+            var calcGradientX1 = chroma.scale([this.selectedColor, this.selectedColor2]).domain([0, domain]).mode(this.gradientMode.toLowerCase());
+            var calcGradientX2 = chroma.scale([this.selectedColor4, this.selectedColor3]).domain([0, domain]).mode(this.gradientMode.toLowerCase());
+
+            var x1 = calcGradientX1(x);
+            var x2 = calcGradientX2(x);
+
+            var calcGradientY = chroma.scale([x1, x2]).domain([0, domain]).mode(this.gradientMode.toLowerCase());
+
+            return calcGradientY(y)._rgb;
+        },
         mouseUp() {
             this.mouseState = false;
         },
@@ -86,7 +102,16 @@ Vue.component('create', {
             this.uploadedImage = file.name;
         },
         toggleGradient() {
+            this.biliGradient = false;
             this.gradiBrush = !this.gradiBrush;
+            setTimeout(function () {
+                custom_input();
+            }, 50);
+        },
+        toggleBiLiGradient() {
+            this.gradiBrush = false;
+            this.biliGradient = !this.biliGradient;
+
             setTimeout(function () {
                 custom_input();
             }, 50);
@@ -232,6 +257,8 @@ Vue.component('create', {
                                     if (this.circularGradient) {
                                         var pos = (centerX + i > halfway) ? halfway - ((centerX + i) - halfway) : (centerX + i);
                                         rgb = this.gradientCalculator(pos, this.selectedColor, this.selectedColor2, halfway);
+                                    } else if (this.biliGradient) {
+                                        rgb = this.biliGradientCalculator(centerX + i, centerY + j, this.settings.rows);
                                     } else {
                                         rgb = this.gradientCalculator(centerX + i, this.selectedColor, this.selectedColor2, this.settings.rows);
                                     }
@@ -243,6 +270,8 @@ Vue.component('create', {
                                     if (this.circularGradient) {
                                         var pos = (centerX + i > halfway) ? halfway - ((centerX + i) - halfway) : (centerX + i);
                                         rgb = this.gradientCalculator(pos, this.selectedColor, this.selectedColor2, halfway);
+                                    } else if (this.biliGradient) {
+                                        rgb = this.biliGradientCalculator(centerX + i, centerY - j, this.settings.rows);
                                     } else {
                                         rgb = this.gradientCalculator(centerX + i, this.selectedColor, this.selectedColor2, this.settings.rows);
                                     }
@@ -256,6 +285,8 @@ Vue.component('create', {
                                     if (this.circularGradient) {
                                         var pos = (centerX - i > halfway) ? halfway - ((centerX - i) - halfway) : (centerX - i);
                                         rgb = this.gradientCalculator(pos, this.selectedColor, this.selectedColor2, halfway);
+                                    }  else if (this.biliGradient) {
+                                        rgb = this.biliGradientCalculator(centerX - i, centerY + j, this.settings.rows);
                                     } else {
                                         rgb = this.gradientCalculator(centerX - i, this.selectedColor, this.selectedColor2, this.settings.rows);
                                     }
@@ -268,6 +299,8 @@ Vue.component('create', {
                                     if (this.circularGradient) {
                                         var pos = (centerX - i > halfway) ? halfway - ((centerX - i) - halfway) : (centerX - i);
                                         rgb = this.gradientCalculator(pos, this.selectedColor, this.selectedColor2, halfway);
+                                    } else if (this.biliGradient) {
+                                        rgb = this.biliGradientCalculator(centerX - i, centerY - j, this.settings.rows);
                                     } else {
                                         rgb = this.gradientCalculator(centerX - i, this.selectedColor, this.selectedColor2, this.settings.rows);
                                     }
@@ -357,16 +390,28 @@ Vue.component('create', {
                             </div>
                             <div class="input-group">
                                 <label for="color" id="panel-label" class="dyn-input-label"
-                                    v-bind:style="{ color:selectedColor }">Color <span
+                                    v-bind:style="{ color:selectedColor }">Color 1<span
                                         v-if="gradiBrush">Start</span></label>
                                 <input type="text" placeholder="#FFFFFF" id="panel-input" name="color" class="dyn-input"
                                     v-model="selectedColor">
                             </div>
-                            <div class="input-group" v-if="gradiBrush">
+                            <div class="input-group" v-if="gradiBrush || biliGradient">
                                 <label for="color2" id="panel-label" class="dyn-input-label"
-                                    v-bind:style="{ color:selectedColor2 }">Color Stop</label>
+                                    v-bind:style="{ color:selectedColor2 }">Color 2</label>
                                 <input type="text" placeholder="#FFFFFF" id="panel-input" name="color2" class="dyn-input"
                                     v-model="selectedColor2">
+                            </div>
+                            <div class="input-group" v-if="biliGradient">
+                                <label for="color3" id="panel-label" class="dyn-input-label"
+                                    v-bind:style="{ color:selectedColor3 }">Color 3</label>
+                                <input type="text" placeholder="#FFFFFF" id="panel-input" name="color3" class="dyn-input"
+                                    v-model="selectedColor3">
+                            </div>
+                            <div class="input-group" v-if="biliGradient">
+                                <label for="color4" id="panel-label" class="dyn-input-label"
+                                    v-bind:style="{ color:selectedColor4 }">Color 4</label>
+                                <input type="text" placeholder="#FFFFFF" id="panel-input" name="color4" class="dyn-input"
+                                    v-model="selectedColor4">
                             </div>
                             <div class="input-group vhc" v-if="gradiBrush">
                                 <div style="font-size:13px;" class="checkbox-label">Circular Gradient</div>
@@ -381,9 +426,16 @@ Vue.component('create', {
                         <div class="panel-header tc">Effects</div>
                         <div class="panel-content vhc">
                             <div class="input-group vhc">
-                                <div style="font-size:13px;" class="checkbox-label">Gradient</div>
+                                <div style="font-size:13px;" class="checkbox-label">Linear Gradient</div>
                                 <label class="switch" for="g-checkbox">
                                     <input type="checkbox" id="g-checkbox" @change="toggleGradient()" />
+                                    <div class="slider round"></div>
+                                </label>
+                            </div>
+                            <div class="input-group vhc">
+                                <div style="font-size:13px;" class="checkbox-label">BiLinear Gradient</div>
+                                <label class="switch" for="g-checkbox">
+                                    <input type="checkbox" id="g-checkbox" @change="toggleBiLiGradient()" />
                                     <div class="slider round"></div>
                                 </label>
                             </div>

@@ -18,10 +18,12 @@ class Pixel {
         this.g = g;
         this.b = b;
 
+	var color = chroma.rgb(this.r, this.g, this.b).hex()
+
         this.modified = true;
 
         this.style = {
-            background: `rgb(${this.r},${this.g},${this.b})`
+            background: color
         };
     }
 }

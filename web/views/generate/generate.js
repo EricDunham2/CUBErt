@@ -29,7 +29,15 @@ Vue.component('generate', {
             });*/
 
             var colors = this.selectedPreset.colors;
-            this.gradientMode = this.selectedPreset.mode;
+
+            if (colors[0]._rgb) {
+  	        for(var i = 0; i < 4; i++) {
+	    	    colors[i] = chroma.rgb(colors[i]._rgb[0], colors[i]._rgb[1], colors[i]._rgb[2]).hex()
+	        }
+	    }
+
+	    
+            this.gradientMode = this.selectedPreset.mode ? this.selectedPreset.mode : "rgb";
 
             this.createCube(colors[0], colors[1], colors[2], colors[3]);
 
@@ -49,23 +57,29 @@ Vue.component('generate', {
                 }
 
                 response.data.forEach(preset => {
-                    vm.presets.push(preset);
-                })
+                   preset.colors = JSON.parse(preset.colors);
+		   vm.presets.push(preset);
+                });
             }
         },
         setPreset() {
             var vm = this;
-            var data = {}; //this.bundle(false)
-
-            data.colors = this.currentColors;
-            data.mode = this.gradientMode.toLowerCase();
 
             var title = window.prompt("Please enter a title for the current configuration.", "");
+
+	   if (this.currentColors[0]._rgb) {
+	       this.currentColors.forEach(color => {
+	    	    color = chroma.rgb(color._rgb[0], color._rgb[1], color._rgb[2]).hex()
+	
+	       });
+	   }
+
             var payload = {
                 "title": title,
                 "colors": JSON.stringify(this.currentColors),
-                "mode": this.gradientMode
+                "mode": this.gradientMode.toLowerCase()
             };
+
 
             this.loading = true;
 
@@ -281,14 +295,6 @@ Vue.component('generate', {
         createCube(color1, color2, color3, color4) {
             clearInterval(this.transitionInterval);
 
-            this.currentColors = [];
-
-            this.currentColors.push(color1);
-            this.currentColors.push(color2);
-            this.currentColors.push(color3);
-            this.currentColors.push(color4);
-
-
             if (this.panels.length < 6) {
                 var numOfPanelsNeeded = 6 - this.panels.length;
 
@@ -302,12 +308,19 @@ Vue.component('generate', {
             color3 = (typeof color3 !== "undefined") ? color3 : chroma.random(); //Bottom Right
             color4 = (typeof color4 !== "undefined") ? color4 : chroma.random(); //Bottom Left
 
-            this.cubeGradient(color1, color2, color3, color4, 0);
+            this.cubeGradient(color4, color1, color2, color3, 0);
             this.linearGradient(color1, color2, 1);
             this.linearGradient(color2, color3, 2);
             this.linearGradient(color3, color4, 3);
             this.linearGradient(color4, color1, 4);
             this.cubeGradient(color1, color4, color3, color2, 5);
+
+            this.currentColors = [];
+
+            this.currentColors.push(color1);
+            this.currentColors.push(color2);
+            this.currentColors.push(color3);
+            this.currentColors.push(color4);
 
             return [color1, color2, color3, color4];
         }
@@ -390,7 +403,7 @@ Vue.component('generate', {
                                 <div class="input-group">
                                     <select v-on:change="applyPreset()" v-model="selectedPreset">
                                         <option value="null">None</option>
-                                        <option v-for="item in presets" v-text="item.title" v-bind:value="item.pixels"></option>
+                                        <option v-for="item in presets" v-text="item.title" v-bind:value="item"></option>
                                     </select>
                                 </div>
                             </div>

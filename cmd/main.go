@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	router.StartServer(":3000")
+	router.StartServer(":80")
 }

@@ -875,6 +875,7 @@ select {
   width: 100vw;
   position: sticky;
   bottom: 0;
+  box-shadow: black -2px -3px 25px;
   z-index: 2;
 }
 

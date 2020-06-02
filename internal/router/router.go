@@ -91,6 +91,8 @@ func setLeds(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(body, &pixels)
 
+	logger.Log("Setting pixels.")
+
 	leds.Save(pixels)
 	leds.Apply(pixels)
 }
@@ -117,9 +119,12 @@ func setPreset(w http.ResponseWriter, r *http.Request) {
 
 	json.Unmarshal(body, &data)
 
+	logger.Log(string(body))
+
 	var favorites []leds.Favorite
 	cfg := file.Read("configs")
-
+	
+	
 	json.Unmarshal(cfg, &favorites)
 
 	favorites = append(favorites, data)

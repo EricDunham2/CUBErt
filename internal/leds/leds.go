@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"github.com/mcuadros/go-rpi-rgb-led-matrix"
 	"image/color"
-	"fmt"
 )
 
 var (
@@ -62,11 +61,13 @@ func New() {
 	//StopTransition()
 
 	if (!powerState) {
+		logger.Log("Creating New Canvas")
 		InitCanvas()
 		powerState = true;
 	}
 
 	Load()
+	logger.Log("Loading startup file")
 }
 
 func InitCanvas() *rgbmatrix.Canvas {
@@ -104,9 +105,8 @@ func Load() {
 	var pixels []Pixel
 	dat := file.Read("start")
 
-	json.Unmarshal(dat, pixels)
+	json.Unmarshal(dat, &pixels)
 	
-	fmt.Println(pixels)
 
 	Apply(pixels)
 }

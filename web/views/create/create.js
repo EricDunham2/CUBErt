@@ -12,17 +12,20 @@ Vue.component('create', {
             gradientMode: "rgb",
             selectedPanel: null,
             ledService: new LedService(),
+	    cubertService: new CubertService(),
             settings: {
                 rows: 32,
                 cols: 32,
             },
+	    rowOffset: 0,
             panels: [],
         }
     },
     methods: {
         deletePanel() {
             this.panels.splice(this.selectedPanelIndex, 1);
-            this.selectedPanelIndex = 0;
+            
+	    this.selectedPanelIndex = 0;
         },
         setPixelMobile(e, panel, index) {
             e.preventDefault();
@@ -158,10 +161,11 @@ Vue.component('create', {
             for (var i = 0; i < this.settings.rows; ++i) {
                 pixels[i] = {};
                 for (var j = 0; j < this.settings.cols; ++j) {
-                    var offset = this.settings.rows * panelNum;
-                    pixels[i][j] = new Pixel(i + offset, j, 0, 0, 0, panelNum);
+                    pixels[i][j] = new Pixel(i + this.rowOffset, j, 0, 0, 0, panelNum);
                 }
             }
+
+            this.rowOffset += this.settings.rows;
 
             this.panels.push(pixels);
             this.$forceUpdate();
@@ -310,9 +314,9 @@ Vue.component('create', {
         </div>
         <div class="l1 vhc" id="particles-js" style="position:absolute; top: 0; width: 100vw; height: 100vh;" />
         <template>
-            <div class="panel col-70" style="display:flex; flex:wrap;">
+            <div class="panel col-70" style="display:flex; flex:wrap; height: calc(100% - 290px); overflow: inherit;">
                 <div class="panel-header tc"></div>
-                <div class="panel-content vhc">
+                <div class="panel-content hc">
                     <div class="matrix"
                         style="margin-top:10px; margin-left: 40px !important; -webkit-transform: rotate(90deg); transform: rotate(90deg);"
                         v-for="(panel, index) in panels" @mousedown="mouseDown(panel, index)" @mouseup="mouseUp()"

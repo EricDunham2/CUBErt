@@ -41,7 +41,7 @@ func Transition(colors []string, method string, steps uint, stepDuration uint) {
 		blend3 := Blend(method, c3, c7, step, steps)
 		blend4 := Blend(method, c4, c8, step, steps)
 
-		var top []Pixel = BilinearGradient(blend1, blend2, blend3, blend4, method, 0)
+		var top []Pixel = BilinearGradient(blend4, blend1, blend2, blend3, method, 0)
 		var front []Pixel = LinearGradient(blend1, blend2, method, 1)
 		var left []Pixel = LinearGradient(blend2, blend3, method, 2)
 		var back []Pixel = LinearGradient(blend3, blend4, method, 3)
@@ -57,14 +57,12 @@ func Transition(colors []string, method string, steps uint, stepDuration uint) {
 
 		Apply(pixels)
 
-		if (desc && step > 0) {
+		if (desc) {
 			step--
-		} else if (!desc && step < steps) {
-			if step == steps {
-				desc = true
-			} else {
-				step++
-			}
+			if (step <= 0) { desc = false }
+		} else if (!desc) {
+			step++
+			if step >= steps { desc = true }
 		}
 
 		time.Sleep(time.Duration(stepDuration) * time.Millisecond)

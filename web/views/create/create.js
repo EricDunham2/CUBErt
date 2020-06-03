@@ -102,14 +102,25 @@ Vue.component('create', {
             this.uploadedImage = file.name;
         },
         toggleGradient() {
-            this.biliGradient = false;
             this.gradiBrush = !this.gradiBrush;
+
+            if (!this.gradiBrush) {
+                this.biliGradient = false;
+            }
+
+            setTimeout(function () {
+                custom_input();
+            }, 50);
+        },
+        toggleCircularGradient() {
+            this.circularGradient = !this.circularGradient;
+            this.biliGradient = false;
+
             setTimeout(function () {
                 custom_input();
             }, 50);
         },
         toggleBiLiGradient() {
-            this.gradiBrush = false;
             this.biliGradient = !this.biliGradient;
 
             setTimeout(function () {
@@ -440,7 +451,7 @@ Vue.component('create', {
                             <div class="input-group vhc" v-if="gradiBrush">
                                 <div style="font-size:13px;" class="checkbox-label">Circular Gradient</div>
                                 <label class="switch" for="cg-checkbox">
-                                    <input type="checkbox" id="cg-checkbox" v-model="circularGradient" />
+                                    <input type="checkbox" id="cg-checkbox"  @change="toggleCircularGradient()"/>
                                     <div class="slider round"></div>
                                 </label>
                             </div>

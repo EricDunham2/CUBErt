@@ -21,7 +21,7 @@
     <script src="/services/cubert/cubert.service.js"></script>
     <!--<script src="/static/scripts/vuetify.min.js"></script>
     <script src="/static/scripts/polyfill.min.js"></script>-->
-
+    <script src="/templates/animations/animations.js"></script>
     <script src="/templates/generate/generate.js"></script>
     <script src="/templates/create/create.js"></script>
     <script src="/templates/settings/settings.js"></script>
@@ -52,6 +52,13 @@
                                     <div class="panel-header tc" style="font-size:25px">Create</div>
                                 </div>
                             </a>
+                            <a v-on:click="setComponent('animations')"
+                                class="clickable no-touch-table navbar-menu-item col-100" style="height:60px;"
+                                v-bind:class="{ active: component == 'animations' }">
+                                <div class="panel col-100">
+                                    <div class="panel-header tc" style="font-size:25px">Animations</div>
+                                </div>
+                            </a>
                             <a v-on:click="setComponent('settings')"
                                 class="clickable no-touch-table navbar-menu-item col-100" style="height:60px;"
                                 v-bind:class="{ active: component == 'settings' }">
@@ -80,8 +87,10 @@
         </div>
         <div class="navbar-controls ">
             <div class="pull-right">
-                <i style="padding: 5px 10px; cursor: pointer;" class="material-icons icon-xs" @click="turnOff()" v-if="powerState">power_off</i>
-                <i style="padding: 5px 10px; cursor: pointer;" class="material-icons icon-xs" @click="turnOn()" v-if="!powerState">power</i>
+                <i style="padding: 5px 10px; cursor: pointer;" class="material-icons icon-xs" @click="turnOff()"
+                    v-if="powerState">power_off</i>
+                <i style="padding: 5px 10px; cursor: pointer;" class="material-icons icon-xs" @click="turnOn()"
+                    v-if="!powerState">power</i>
             </div>
         </div>
     </div>

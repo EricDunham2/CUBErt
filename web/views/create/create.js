@@ -104,6 +104,8 @@ Vue.component('create', {
         toggleGradient() {
             this.gradiBrush = !this.gradiBrush;
 
+            console.log(this.gradiBrush);
+
             if (!this.gradiBrush) {
                 this.biliGradient = false;
             }
@@ -401,18 +403,19 @@ Vue.component('create', {
                             </div>
                         </div>
                     </div>
+
                     <div class="panel col-100">
                         <div class="panel-header tc">Colors</div>
                         <div class="panel-content vhc">
                             <div class="input-group">
-                                <label for="color" id="panel-label" class="dyn-input-label"
-                                    v-bind:style="{ color:selectedColor }">Color <span-if="gradiBrush">1</span></label>
+
+                                <label for="color" id="panel-label" class="dyn-input-label" v-bind:style="{ color:selectedColor }">Color <span v-if="gradiBrush">1</span></label>
+
                                 <input type="text" placeholder="#FFFFFF" id="panel-input" name="color" class="dyn-input"
                                     v-model="selectedColor">
                             </div>
                             <div class="input-group" v-if="gradiBrush || biliGradient">
-                                <label for="color2" id="panel-label" class="dyn-input-label"
-                                    v-bind:style="{ color:selectedColor2 }">Color 2</label>
+                                <label for="color2" id="panel-label" class="dyn-input-label" v-bind:style="{ color:selectedColor2 }">Color 2</label>
                                 <input type="text" placeholder="#FFFFFF" id="panel-input" name="color2" class="dyn-input"
                                     v-model="selectedColor2">
                             </div>
@@ -436,21 +439,22 @@ Vue.component('create', {
                             <div class="input-group vhc">
                                 <div style="font-size:13px;" class="checkbox-label">Linear Gradient</div>
                                 <label class="switch" for="g-checkbox">
-                                    <input type="checkbox" id="g-checkbox" v-model="gradiBrush" @change="toggleGradient()" />
+                                    <input type="checkbox" id="g-checkbox" @change="toggleGradient()" />
                                     <div class="slider round"></div>
                                 </label>
                             </div>
                             <div class="input-group vhc">
                                 <div style="font-size:13px;" class="checkbox-label">BiLinear Gradient</div>
                                 <label class="switch" for="bg-checkbox">
-                                    <input type="checkbox" id="bg-checkbox" v-model="biliGradient" @change="toggleBiLiGradient()" />
+                                    <input type="checkbox" id="bg-checkbox" @change="toggleBiLiGradient()" />
                                     <div class="slider round"></div>
                                 </label>
                             </div>
+
                             <div class="input-group vhc" v-if="gradiBrush">
                                 <div style="font-size:13px;" class="checkbox-label">Circular Gradient</div>
                                 <label class="switch" for="cg-checkbox">
-                                    <input type="checkbox" id="cg-checkbox" v-model="circularGradient"  @change="toggleCircularGradient()"/>
+                                    <input type="checkbox" id="cg-checkbox" @change="toggleCircularGradient()"/>
                                     <div class="slider round"></div>
                                 </label>
                             </div>

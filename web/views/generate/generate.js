@@ -57,8 +57,12 @@ Vue.component('generate', {
                 }
 
                 response.data.forEach(preset => {
-                   preset.colors = JSON.parse(preset.colors);
-		   vm.presets.push(preset);
+                    try {
+                        preset.colors = JSON.parse(preset.colors);
+                        vm.presets.push(preset);
+                    } catch (err) {
+                        console.log(err);
+                    }
                 });
             }
         },

@@ -1,9 +1,9 @@
 Vue.component('generate', {
-    data: function () {
+    data: function() {
         return {
             presets: [],
             loading: false,
-            selectedPreset:null,
+            selectedPreset: null,
             transitionInterval: null,
             code: false,
             expression: "",
@@ -31,12 +31,12 @@ Vue.component('generate', {
             var colors = this.selectedPreset.colors;
 
             if (colors[0]._rgb) {
-  	        for(var i = 0; i < 4; i++) {
-	    	    colors[i] = chroma.rgb(colors[i]._rgb[0], colors[i]._rgb[1], colors[i]._rgb[2]).hex()
-	        }
-	    }
+                for (var i = 0; i < 4; i++) {
+                    colors[i] = chroma.rgb(colors[i]._rgb[0], colors[i]._rgb[1], colors[i]._rgb[2]).hex()
+                }
+            }
 
-	    
+
             this.gradientMode = this.selectedPreset.mode ? this.selectedPreset.mode : "rgb";
 
             this.createCube(colors[0], colors[1], colors[2], colors[3]);
@@ -71,16 +71,17 @@ Vue.component('generate', {
 
             var title = window.prompt("Please enter a title for the current configuration.", "");
 
-	   if (this.currentColors[0]._rgb) {
-	       this.currentColors.forEach(color => {
-	    	    color = chroma.rgb(color._rgb[0], color._rgb[1], color._rgb[2]).hex()
-	
-	       });
-	   }
+            var payloadColors = []
+
+            if (this.currentColors[0]._rgb) {
+                this.currentColors.forEach(color => {
+                    payloadColors.push(chroma.rgb(color._rgb[0], color._rgb[1], color._rgb[2]).hex());
+                });
+            }
 
             var payload = {
                 "title": title,
-                "colors": JSON.stringify(this.currentColors),
+                "colors": JSON.stringify(payloadColors),
                 "mode": this.gradientMode.toLowerCase()
             };
 
@@ -97,7 +98,7 @@ Vue.component('generate', {
         },
         showCode() {
             this.code = !this.code;
-            setTimeout(function () {
+            setTimeout(function() {
                 custom_input();
             }, 50);
         },
@@ -206,9 +207,9 @@ Vue.component('generate', {
             var payload = [];
             var vm = this;
 
-            var colors = window.prompt(`Please enter the colors in hex and csv format`, "")
-            var steps = window.prompt(`Please enter number of steps`,"");
-            var stepInterval = window.prompt(`Please enter time between steps`,"");
+            var colors = window.prompt(`Colors in hex and csv format`, "")
+            var steps = window.prompt(`Number of steps`, "");
+            var stepInterval = window.prompt(`Time between steps`, "");
 
             payload.push(colors.split(","));
             payload.push(this.gradientMode.toLowerCase());
@@ -282,10 +283,10 @@ Vue.component('generate', {
             }, 200);*/
         },
         customCube() {
-            var color1 = window.prompt(`Please enter color #${1} in hex format`,"");
-            var color2 = window.prompt(`Please enter color #${2} in hex format`,"");
-            var color3 = window.prompt(`Please enter color #${3} in hex format`,"");
-            var color4 = window.prompt(`Please enter color #${4} in hex format`,"");
+            var color1 = window.prompt(`Please enter color #${1} in hex format`, "");
+            var color2 = window.prompt(`Please enter color #${2} in hex format`, "");
+            var color3 = window.prompt(`Please enter color #${3} in hex format`, "");
+            var color4 = window.prompt(`Please enter color #${4} in hex format`, "");
 
             this.currentColors = [];
 
@@ -302,7 +303,7 @@ Vue.component('generate', {
             if (this.panels.length < 6) {
                 var numOfPanelsNeeded = 6 - this.panels.length;
 
-                for(var i = 0; i < numOfPanelsNeeded; i++) {
+                for (var i = 0; i < numOfPanelsNeeded; i++) {
                     this.createMatrix();
                 }
             }
@@ -331,7 +332,7 @@ Vue.component('generate', {
     },
     mounted() {
         custom_input();
-	this.getPresets();
+        this.getPresets();
         this.createCube();
     },
     beforeMount() {

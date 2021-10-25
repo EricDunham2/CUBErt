@@ -26,6 +26,7 @@
     <script src="/templates/create/create.js"></script>
     <script src="/templates/settings/settings.js"></script>
     <script src="/templates/ledstrip/ledstrip.js"></script>
+    <script src="/templates/transistion/transistion.js"></script>
 
     <meta name="viewport" content="width=device-width">
 </head>
@@ -40,37 +41,27 @@
                 <div class="nav-menu vhc">
                     <div class="panel col-100">
                         <div class="panel-content col-100 hc">
-                            <a v-on:click="setComponent('generate')"
-                                class="clickable no-touch-table navbar-menu-item col-100" style="height:60px;"
-                                v-bind:class="{ active: component == 'home' }">
+                            <a v-on:click="setComponent('generate')" class="clickable no-touch-table navbar-menu-item col-100" style="height:60px;" v-bind:class="{ active: component == 'home' }">
                                 <div class="panel col-100">
                                     <div class="panel-header tc" style="font-size:25px">Generate</div>
                                 </div>
                             </a>
-                            <a v-on:click="setComponent('create')"
-                                class="clickable no-touch-table navbar-menu-item col-100" style="height:60px;"
-                                v-bind:class="{ active: component == 'create' }">
+                            <a v-on:click="setComponent('create')" class="clickable no-touch-table navbar-menu-item col-100" style="height:60px;" v-bind:class="{ active: component == 'create' }">
                                 <div class="panel col-100">
                                     <div class="panel-header tc" style="font-size:25px">Create</div>
                                 </div>
                             </a>
-                            <a v-on:click="setComponent('animations')"
-                                class="clickable no-touch-table navbar-menu-item col-100" style="height:60px;"
-                                v-bind:class="{ active: component == 'animations' }">
+                            <a v-on:click="setComponent('transistion')" class="clickable no-touch-table navbar-menu-item col-100" style="height:60px;" v-bind:class="{ active: component == 'transistion' }">
                                 <div class="panel col-100">
-                                    <div class="panel-header tc" style="font-size:25px">Animations</div>
+                                    <div class="panel-header tc" style="font-size:25px">Transistion</div>
                                 </div>
                             </a>
-                            <a v-on:click="setComponent('ledstrip')"
-                                class="clickable no-touch-table navbar-menu-item col-100" style="height:60px;"
-                                v-bind:class="{ active: component == 'ledstrip' }">
+                            <a v-on:click="setComponent('ledstrip')" class="clickable no-touch-table navbar-menu-item col-100" style="height:60px;" v-bind:class="{ active: component == 'ledstrip' }">
                                 <div class="panel col-100">
                                     <div class="panel-header tc" style="font-size:25px">Led Strip</div>
                                 </div>
                             </a>
-                            <a v-on:click="setComponent('settings')"
-                                class="clickable no-touch-table navbar-menu-item col-100" style="height:60px;"
-                                v-bind:class="{ active: component == 'settings' }">
+                            <a v-on:click="setComponent('settings')" class="clickable no-touch-table navbar-menu-item col-100" style="height:60px;" v-bind:class="{ active: component == 'settings' }">
                                 <div class="panel col-100">
                                     <div class="panel-header tc" style="font-size:25px">Settings</div>
                                 </div>
@@ -81,29 +72,26 @@
             </div>
         </div>
         <div class="navbar-navigation vhc">
-            <a v-on:click="setComponent('generate')" class="navbar-item vhc"
-                v-bind:class="{ active: component == 'generate' }">
+            <a v-on:click="setComponent('generate')" class="navbar-item vhc" v-bind:class="{ active: component == 'generate' }">
                 <div class="vhc">Generate</div>
             </a>
-            <a v-on:click="setComponent('create')" class="navbar-item vhc"
-                v-bind:class="{ active: component == 'create' }">
+            <a v-on:click="setComponent('create')" class="navbar-item vhc" v-bind:class="{ active: component == 'create' }">
                 <div class="vhc">Create</div>
             </a>
-            <a v-on:click="setComponent('ledstrip')" class="navbar-item vhc"
-                v-bind:class="{ active: component == 'ledstrip' }">
+            <a v-on:click="setComponent('transistion')" class="navbar-item vhc" v-bind:class="{ active: component == 'transistion' }">
+                <div class="vhc">Transistion</div>
+            </a>
+            <a v-on:click="setComponent('ledstrip')" class="navbar-item vhc" v-bind:class="{ active: component == 'ledstrip' }">
                 <div class="vhc">Led Strip</div>
             </a>
-            <a v-on:click="setComponent('settings')" class="navbar-item vhc"
-                v-bind:class="{ active: component == 'settings' }">
+            <a v-on:click="setComponent('settings')" class="navbar-item vhc" v-bind:class="{ active: component == 'settings' }">
                 <div class="vhc">Settings</div>
             </a>
         </div>
         <div class="navbar-controls ">
             <div class="pull-right">
-                <i style="padding: 5px 10px; cursor: pointer;" class="material-icons icon-xs" @click="turnOff()"
-                    v-if="powerState">power_off</i>
-                <i style="padding: 5px 10px; cursor: pointer;" class="material-icons icon-xs" @click="turnOn()"
-                    v-if="!powerState">power</i>
+                <i style="padding: 5px 10px; cursor: pointer;" class="material-icons icon-xs" @click="turnOff()" v-if="powerState">power_off</i>
+                <i style="padding: 5px 10px; cursor: pointer;" class="material-icons icon-xs" @click="turnOn()" v-if="!powerState">power</i>
             </div>
         </div>
     </div>

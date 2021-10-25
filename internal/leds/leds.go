@@ -58,7 +58,7 @@ func initMatrix() rgbmatrix.Matrix {
 }
 
 func New() {
-	//StopTransition()
+	StopTransition()
 
 	if (!powerState) {
 		logger.Log("Creating New Canvas")
@@ -71,7 +71,7 @@ func New() {
 }
 
 func InitCanvas() *rgbmatrix.Canvas {
-	//StopTransition()
+	StopTransition()
 
 	if powerState == true { return canvas }
 
@@ -84,7 +84,7 @@ func InitCanvas() *rgbmatrix.Canvas {
 }
 
 func Delete() {
-	//StopTransition()
+	StopTransition()
 
 	if powerState == false {
 		return
@@ -112,11 +112,11 @@ func Load() {
 }
 
 func Apply(data []Pixel) {
-	//StopTransition()
+	StopTransition()
 
 	logger.Log("Applying changes")
 
-	//New()
+	New()
 
 	paint(data)
 	return
@@ -124,7 +124,7 @@ func Apply(data []Pixel) {
 
 func paint(data []Pixel) {
 	logger.Log("Painting started...")
-	//bounds := canvas.Bounds()
+	bounds := canvas.Bounds()
 
 	for _, led := range data {
 		canvas.Set(led.X, led.Y, color.RGBA{R:led.R, G:led.G, B:led.B, A:255})
@@ -135,7 +135,7 @@ func paint(data []Pixel) {
 }
 
 func SetSettings(dat []byte) {
-	//StopTransition()
+	StopTransition()
 
 	ns := &Settings{}
 	json.Unmarshal(dat, ns)
@@ -168,4 +168,25 @@ func LoadSettings() {
 
 	dat := file.SafeRead("settings",`{"rows":32, "cols":32, "parallel":1, "chained":6, "brightness":100, "hardware_mapping":"adafruit-hat-pwm","show_refresh":false, "inverse_colors":false, "disable_hardware_pulsing":false }`)
 	json.Unmarshal(dat, settings)
+}
+
+func Rotate() {
+	offset := settings.Rows
+
+	var previousRow []color.Color;
+
+	for row := offset; row < rows; row++ {
+		c := canvas.At(row, 0)
+		append(previousRow, c)
+	}
+
+	for col := 0; col < cols; col++ {
+		var currentRow []color.Color
+
+		for row := offset; row < rows; row++ {
+			c := canvas.At(row, col)
+			append(currentRow, c)
+			canvas.Set(col, row, c)
+		}
+	}
 }

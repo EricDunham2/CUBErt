@@ -1,5 +1,5 @@
 Vue.component('create', {
-    data: function () {
+    data: function() {
         return {
             loading: false,
             mouseState: false,
@@ -9,26 +9,27 @@ Vue.component('create', {
             selectedColor4: "#FFF",
             selectedBrushSize: 3,
             gradiBrush: false,
+            pictureSpan: 0,
             biliGradient: false,
             circularGradient: false,
             uploadedImage: null,
             gradientMode: "rgb",
             selectedPanel: null,
             ledService: new LedService(),
-	    cubertService: new CubertService(),
+            cubertService: new CubertService(),
             settings: {
                 rows: 32,
                 cols: 32,
             },
-	    rowOffset: 0,
+            rowOffset: 0,
             panels: [],
         }
     },
     methods: {
         deletePanel() {
             this.panels.splice(this.selectedPanelIndex, 1);
-            
-	    this.selectedPanelIndex = 0;
+
+            this.selectedPanelIndex = 0;
         },
         setPixelMobile(e, panel, index) {
             e.preventDefault();
@@ -93,7 +94,7 @@ Vue.component('create', {
             var fileReader = new FileReader();
             var vm = this;
 
-            fileReader.onload = function (e) {
+            fileReader.onload = function(e) {
                 vm.imagePaint(e.target.result);
             }
 
@@ -110,7 +111,7 @@ Vue.component('create', {
                 this.biliGradient = false;
             }
 
-            setTimeout(function () {
+            setTimeout(function() {
                 custom_input();
             }, 50);
         },
@@ -118,14 +119,14 @@ Vue.component('create', {
             this.circularGradient = !this.circularGradient;
             this.biliGradient = false;
 
-            setTimeout(function () {
+            setTimeout(function() {
                 custom_input();
             }, 50);
         },
         toggleBiLiGradient() {
             this.biliGradient = !this.biliGradient;
 
-            setTimeout(function () {
+            setTimeout(function() {
                 custom_input();
             }, 50);
         },
@@ -168,7 +169,7 @@ Vue.component('create', {
             var i = new Image();
             var vm = this;
 
-            i.onload = function () {
+            i.onload = function() {
                 var canvas = document.createElement('canvas');
 
                 canvas.height = i.height * (vm.settings.cols / i.height);
@@ -298,7 +299,7 @@ Vue.component('create', {
                                     if (this.circularGradient) {
                                         var pos = (centerX - i > halfway) ? halfway - ((centerX - i) - halfway) : (centerX - i);
                                         rgb = this.gradientCalculator(pos, this.selectedColor, this.selectedColor2, halfway);
-                                    }  else if (this.biliGradient) {
+                                    } else if (this.biliGradient) {
                                         rgb = this.biliGradientCalculator(centerX - i, centerY + j, this.settings.rows);
                                     } else {
                                         rgb = this.gradientCalculator(centerX - i, this.selectedColor, this.selectedColor2, this.settings.rows);
@@ -506,47 +507,47 @@ Vue.component('create', {
 });
 
 
-            /*var vm = this;
+/*var vm = this;
 
-            var color1 = chroma.random();
-            var color2 = chroma.random();
-            var color3 = chroma.random();
-            var color4 = chroma.random();
+var color1 = chroma.random();
+var color2 = chroma.random();
+var color3 = chroma.random();
+var color4 = chroma.random();
 
-            var panel = 0; //this.createMatrix();
+var panel = 0; //this.createMatrix();
 
-            //Create the base gradient
-            this.cubeGradient(color1, color2, color3, color4, panel);
+//Create the base gradient
+this.cubeGradient(color1, color2, color3, color4, panel);
 
-            setInterval(function () {
-                //Instead of calculating the cube gradient again
-                //Shift all the pixels on the outside edge (counter)clockwise
-                //And calculate the linear gradient between each column
-                var currPanel = vm.panels[panel];
-                var count = 31;
-                var offset = 0;
+setInterval(function () {
+    //Instead of calculating the cube gradient again
+    //Shift all the pixels on the outside edge (counter)clockwise
+    //And calculate the linear gradient between each column
+    var currPanel = vm.panels[panel];
+    var count = 31;
+    var offset = 0;
 
-                for (var h = 0; h < count; h++) {
-                    for (var i = offset; i < count; i++) {
-                        currPanel[offset][i] = currPanel[offset][i + 1]; //(0,y+1)
-                        currPanel[i][count] = currPanel[i + 1][count]; //(x+1, 31)
+    for (var h = 0; h < count; h++) {
+        for (var i = offset; i < count; i++) {
+            currPanel[offset][i] = currPanel[offset][i + 1]; //(0,y+1)
+            currPanel[i][count] = currPanel[i + 1][count]; //(x+1, 31)
 
-                        currPanel[count][count - i] = currPanel[count][count - (i + 1)]; //(31, y+1)
-                        currPanel[count - i][offset] = currPanel[count - (i + 1)][offset]; //(x+1, 0)
-                    }
+            currPanel[count][count - i] = currPanel[count][count - (i + 1)]; //(31, y+1)
+            currPanel[count - i][offset] = currPanel[count - (i + 1)][offset]; //(x+1, 0)
+        }
 
-                    count--;
-                    offset++;
-                }
+        count--;
+        offset++;
+    }
 
 
-                /*currPanel[0][31] = currPanel[0][i + 1]; //(0,y+1)
-                currPanel[i][31] = currPanel[i + 1][31]; //(x+1, 31)
+    /*currPanel[0][31] = currPanel[0][i + 1]; //(0,y+1)
+    currPanel[i][31] = currPanel[i + 1][31]; //(x+1, 31)
 
-                currPanel[31][i] = currPanel[31][i + 1]; //(31, y+1)
-                currPanel[i][0] = currPanel[i + 1][0]; //(x+1, 0)
+    currPanel[31][i] = currPanel[31][i + 1]; //(31, y+1)
+    currPanel[i][0] = currPanel[i + 1][0]; //(x+1, 0)
 
-                //currPanel[0][0] = currPanel[1][0];
-                //currPanel[0][31] = currPanel[1][31];
+    //currPanel[0][0] = currPanel[1][0];
+    //currPanel[0][31] = currPanel[1][31];
 
-            }, 500);*/
+}, 500);*/

@@ -137,3 +137,10 @@ func StopTransition() {
 	stop = true
 }
 
+func Rotate() {
+	offset := settings.Rows
+
+	for col := 0; col < cols; col++ {
+		for row := 0; row < rows;
+	}
+}

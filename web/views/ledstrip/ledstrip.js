@@ -226,16 +226,6 @@ Vue.component('ledstrip', {
                                 <input type="text" id="panel-input" name="leds" class="dyn-input"
                                     v-model="numberOfLeds">
                             </div>
-    <!--                        <div class="input-group" v-if="gradient">
-                                <label for="leds" id="panel-label" class="dyn-input-label">Color 1</span></label>
-                                <input type="text" id="panel-input" name="leds" class="dyn-input"
-                                    v-model="selectedColor1" v-on:change="generateGradient()">
-                            </div>
-                            <div class="input-group" v-if="gradient">
-                                <label for="leds" id="panel-label" class="dyn-input-label">Color 2</span></label>
-                                <input type="text" id="panel-input" name="leds" class="dyn-input"
-                                    v-model="selectedColor2" v-on:change="generateGradient()">
-                            </div>-->
                         </div>
 
                         <div class="panel-content vhc">

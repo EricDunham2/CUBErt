@@ -73,7 +73,7 @@ func StartServer(port string) {
 func getSettings(w http.ResponseWriter, r *http.Request) {
 	settings := leds.GetSettings()
 
-	dat, _ := json.Marshal(*settings)
+	dat, _ := json.Marshal(*settings)*/
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(dat)

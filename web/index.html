@@ -26,7 +26,7 @@
     <script src="/templates/create/create.js"></script>
     <script src="/templates/settings/settings.js"></script>
     <script src="/templates/ledstrip/ledstrip.js"></script>
-    <script src="/templates/transistion/transistion.js"></script>
+    <script src="/templates/transition/transition.js"></script>
 
     <meta name="viewport" content="width=device-width">
 </head>
@@ -51,9 +51,9 @@
                                     <div class="panel-header tc" style="font-size:25px">Create</div>
                                 </div>
                             </a>
-                            <a v-on:click="setComponent('transistion')" class="clickable no-touch-table navbar-menu-item col-100" style="height:60px;" v-bind:class="{ active: component == 'transistion' }">
+                            <a v-on:click="setComponent('transition')" class="clickable no-touch-table navbar-menu-item col-100" style="height:60px;" v-bind:class="{ active: component == 'transition' }">
                                 <div class="panel col-100">
-                                    <div class="panel-header tc" style="font-size:25px">Transistion</div>
+                                    <div class="panel-header tc" style="font-size:25px">transition</div>
                                 </div>
                             </a>
                             <a v-on:click="setComponent('ledstrip')" class="clickable no-touch-table navbar-menu-item col-100" style="height:60px;" v-bind:class="{ active: component == 'ledstrip' }">
@@ -78,8 +78,8 @@
             <a v-on:click="setComponent('create')" class="navbar-item vhc" v-bind:class="{ active: component == 'create' }">
                 <div class="vhc">Create</div>
             </a>
-            <a v-on:click="setComponent('transistion')" class="navbar-item vhc" v-bind:class="{ active: component == 'transistion' }">
-                <div class="vhc">Transistion</div>
+            <a v-on:click="setComponent('transition')" class="navbar-item vhc" v-bind:class="{ active: component == 'transition' }">
+                <div class="vhc">Transition</div>
             </a>
             <a v-on:click="setComponent('ledstrip')" class="navbar-item vhc" v-bind:class="{ active: component == 'ledstrip' }">
                 <div class="vhc">Led Strip</div>
@@ -98,6 +98,7 @@
     <div class="content vhc">
         <generate v-if="component == 'generate'"></generate>
         <create v-if="component == 'create'"></create>
+        <transition v-if="component == 'transition'"></transition>
         <ledstrip v-if="component == 'ledstrip'"></ledstrip>
         <settings v-if="component == 'settings'"></settings>
     </div>

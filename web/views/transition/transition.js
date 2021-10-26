@@ -2,7 +2,8 @@ Vue.component('transition', {
     data: function() {
         return {
             loading: false,
-            interval: null,
+            interval: 20,
+            presets: [],
             startPreset: null,
             endPreset: null,
             steps: 180,
@@ -131,28 +132,31 @@ Vue.component('transition', {
             <div class="vhc col-100">
                 <div style="height:230px; position:relative; top: 20px;" class="col-100">
                     <div class="panel col-100">
-
                         <div class="panel-header tc">Properties</div>
-
                         <div class="panel-content vhc">
-                            <div class="input-group" v-if="gradient">
+                            <div class="input-group">
                                 <label for="gradientMode" id="panel-label" class="dyn-input-label">Gradient Mode</span></label>
                                 <input type="text" id="panel-input" name="gradientMode" class="dyn-input"
                                     v-model="gradientMode">
                             </div>
 
-                            <div class="input-group" v-if="gradient">
+                            <div class="input-group">
                                 <label for="interval" id="panel-label" class="dyn-input-label">Transistion Interval </span></label>
                                 <input type="text" id="panel-input" name="interval" class="dyn-input"
                                     v-model="interval">
                             </div>
 
-                            <div class="input-group" v-if="gradient">
+                            <div class="input-group">
                                 <label for="steps" id="panel-label" class="dyn-input-label">Steps </span></label>
                                 <input type="text" id="panel-input" name="steps" class="dyn-input"
                                     v-model="steps">
                             </div>
+                        </div>
+                    </div>
 
+                    <div class="panel col-100">
+                        <div class="panel-header tc">Properties</div>
+                        <div class="panel-content vhc">
                             <div class="input-group">
                                 <select v-on:change="applyPreset()" v-model="startPreset">
                                     <option value="null">None</option>
@@ -167,7 +171,8 @@ Vue.component('transition', {
                                 </select>
                             </div>
                         </div>
-                    </div>
+                    </div
+
                     <div class="panel col-100">
                         <div class="panel-header tc">Actions</div>
                         <div class="panel-content vhc">

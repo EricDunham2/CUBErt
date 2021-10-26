@@ -30,11 +30,11 @@ Vue.component('generate', {
 
             var colors = this.selectedPreset.colors;
 
-            if (colors[0]._rgb) {
+            /*if (colors[0]._rgb) {
                 for (var i = 0; i < 4; i++) {
                     colors[i] = chroma.rgb(colors[i]._rgb[0], colors[i]._rgb[1], colors[i]._rgb[2]).hex()
                 }
-            }
+            }*/
 
 
             this.gradientMode = this.selectedPreset.mode ? this.selectedPreset.mode : "rgb";

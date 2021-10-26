@@ -29,6 +29,7 @@ func Transition(colors []string, method string, steps uint, stepDuration uint) {
 	var pixels []Pixel
 	var step uint = 0
 	var desc = false
+	var isPreview = true
 
 	for {
 		if stop {
@@ -59,13 +60,18 @@ func Transition(colors []string, method string, steps uint, stepDuration uint) {
 
 		if (desc) {
 			step--
+			isPreview = false
 			if (step <= 0) { desc = false }
 		} else if (!desc) {
 			step++
 			if step >= steps { desc = true }
 		}
 
-		time.Sleep(time.Duration(stepDuration) * time.Millisecond)
+		if isPreview {
+			time.Sleep(time.Duration(100) * time.Millisecond)
+		} else {
+			time.Sleep(time.Duration(stepDuration) * time.Millisecond)
+		}
 	}
 }
 
@@ -76,13 +82,13 @@ func Blend(method string, c1 colorful.Color, c2 colorful.Color, step uint, steps
 		case "rgb" :
 			color = c1.BlendRgb(c2, float64(step)/float64(steps)).Clamped()
 		case "hsv" :
-			color = c1.BlendRgb(c2, float64(step)/float64(steps)).Clamped()
+			color = c1.BlendHsv(c2, float64(step)/float64(steps)).Clamped()
 		case "lab" :
-			color = c1.BlendRgb(c2, float64(step)/float64(steps)).Clamped()
+			color = c1.BlendLab(c2, float64(step)/float64(steps)).Clamped()
 		case "hsl" :
-			color = c1.BlendRgb(c2, float64(step)/float64(steps)).Clamped()
+			color = c1.BlendHcl(c2, float64(step)/float64(steps)).Clamped()
 		case "luv" :
-			color = c1.BlendRgb(c2, float64(step)/float64(steps)).Clamped()
+			color = c1.BlendLuv(c2, float64(step)/float64(steps)).Clamped()
 		default :
 			return color
 	}
@@ -135,12 +141,4 @@ func LinearGradient(c1 colorful.Color, c2 colorful.Color, method string, offset 
 
 func StopTransition() {
 	stop = true
-}
-
-func Rotate() {
-	offset := settings.Rows
-
-	for col := 0; col < cols; col++ {
-		for row := 0; row < rows;
-	}
 }

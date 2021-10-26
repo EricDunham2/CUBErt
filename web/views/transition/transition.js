@@ -57,19 +57,19 @@ Vue.component('transition', {
             var payload = [];
             var vm = this;
 
-            var steps = parseInt(vm.steps);
-            var stepInterval = parseInt(vm.interval);
+            var steps = vm.steps;
+            var stepInterval = vm.interval;
 
-            if (!isInteger(steps) || !isInteger(interval)) {
+            if (isNaN(steps) || isNaN(stepInterval)) {
                 console.log("Either the steps or the interval set is not a number");
                 return;
             }
 
             var colors = []
-            colors.concat(vm.startPreset);
-            colors.concat(vm.endPreset);
+            colors = colors.concat(vm.startPreset.colors);
+            colors = colors.concat(vm.endPreset.colors);
 
-            payload.push(colors.split(","));
+            payload.push(colors);
             payload.push(this.gradientMode.toLowerCase());
             payload.push(parseInt(steps));
             payload.push(parseInt(this.interval));
@@ -158,14 +158,14 @@ Vue.component('transition', {
                         <div class="panel-header tc">Properties</div>
                         <div class="panel-content vhc">
                             <div class="input-group">
-                                <select v-on:change="applyPreset()" v-model="startPreset">
+                                <select v-model="startPreset">
                                     <option value="null">None</option>
                                     <option v-for="item in presets" v-text="item.title" v-bind:value="item"></option>
                                 </select>
                             </div>
 
                             <div class="input-group">
-                                <select v-on:change="applyPreset()" v-model="endPreset">
+                                <select v-model="endPreset">
                                     <option value="null">None</option>
                                     <option v-for="item in presets" v-text="item.title" v-bind:value="item"></option>
                                 </select>
@@ -177,7 +177,7 @@ Vue.component('transition', {
                         <div class="panel-header tc">Actions</div>
                         <div class="panel-content vhc">
                             <div class="btn-group col-100">
-                                <label for="apply" class="toggle-lbl vh-center" @click="apply()">
+                                <label for="apply" class="toggle-lbl vh-center" @click="createTransition()">
                                     <span class="v-center" style="text-transform: uppercase;">Apply</span>
                                 </label>
                             </div>

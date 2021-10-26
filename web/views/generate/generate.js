@@ -402,7 +402,7 @@ Vue.component('generate', {
                         </div>
                     </div>
                     <div class="panel col-100">
-                        <div class="panel-header tc">Pre Fabs</div>
+                        <div class="panel-header tc">Presets</div>
                         <div class="panel-content vhc">
                             <div class="col-100">
                                 <div class="input-group">
@@ -416,11 +416,8 @@ Vue.component('generate', {
                                 <label for="cube" class="toggle-lbl vh-center" @click="createCube()">
                                     <span class="v-center" style="text-transform: uppercase;">Cube</span>
                                 </label>
-                                <label for="transition" class="toggle-lbl vh-center" @click="customCube()">
+                                <label for="customCube" class="toggle-lbl vh-center" @click="customCube()">
                                     <span class="v-center" style="text-transform: uppercase;">Custom Cube</span>
-                                </label>
-                                <label for="transition" class="toggle-lbl vh-center" @click="createTransition()">
-                                    <span class="v-center" style="text-transform: uppercase;">Transition</span>
                                 </label>
                             </div>
                         </div>

@@ -56,6 +56,8 @@ Vue.component('generate', {
                     return;
                 }
 
+                vm.presets = []
+
                 response.data.forEach(preset => {
                     try {
                         preset.colors = JSON.parse(preset.colors);

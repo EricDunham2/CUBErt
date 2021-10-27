@@ -169,24 +169,3 @@ func LoadSettings() {
 	dat := file.SafeRead("settings",`{"rows":32, "cols":32, "parallel":1, "chained":6, "brightness":100, "hardware_mapping":"adafruit-hat-pwm","show_refresh":false, "inverse_colors":false, "disable_hardware_pulsing":false }`)
 	json.Unmarshal(dat, settings)
 }
-
-func Rotate() {
-	offset := settings.Rows
-
-	var previousRow []color.Color;
-
-	for row := offset; row < rows; row++ {
-		c := canvas.At(row, 0)
-		append(previousRow, c)
-	}
-
-	for col := 0; col < cols; col++ {
-		var currentRow []color.Color
-
-		for row := offset; row < rows; row++ {
-			c := canvas.At(row, col)
-			append(currentRow, c)
-			canvas.Set(col, row, c)
-		}
-	}
-}

@@ -1,7 +1,7 @@
 package file
 
 import (
-	"../logger"
+	//"../logger"
 	"os"
 	"io/ioutil"
 	"fmt"
@@ -11,7 +11,7 @@ func Create(data string, name string) {
 	file, err := os.Create(fmt.Sprintf("../config/%s.json", name))
 
 	if err != nil {
-		logger.Log("Error creating new config file...")
+		//logger.Log("Error creating new config file...")
 
 		return
 	}
@@ -19,19 +19,19 @@ func Create(data string, name string) {
 	_, err = file.Write([]byte(data))
 
 	if err != nil {
-		logger.Log("Error writing to new config file...")
+		//logger.Log("Error writing to new config file...")
 
 		return
 	}
 
-	logger.Log("New config file created...")
+	//logger.Log("New config file created...")
 }
 
 func SafeRead(name string, defaultValues string) []byte {
 	path := fmt.Sprintf("../config/%s.json", name)
 
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		logger.Log("Settings file does not exist...")
+		//logger.Log("Settings file does not exist...")
 		Create(defaultValues, name)
 	}
 
@@ -44,10 +44,10 @@ func Read(name string) []byte {
 
 	file, err := os.Open(path)
 
-	logger.Log("Reading file...")
+	//logger.Log("Reading file...")
 
 	if err != nil {
-		logger.Log(err.Error())
+		//logger.Log(err.Error())
 
 		return []byte{}
 	}
@@ -55,7 +55,7 @@ func Read(name string) []byte {
 	dat, err := ioutil.ReadAll(file)
 
 	if err != nil {
-		logger.Log(err.Error())
+		//logger.Log(err.Error())
 
 		return []byte{}
 	}

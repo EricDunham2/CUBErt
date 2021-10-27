@@ -10,6 +10,7 @@ import (
 	"html/template"
 	"net/http"
 	"../leds"
+	"fmt"
 )
 
 var router *mux.Router
@@ -27,7 +28,6 @@ func addResources() {
 func addEndpoints() {
 	router.HandleFunc("/off", off).Methods("GET")
 	router.HandleFunc("/on", on).Methods("GET")
-
 	router.HandleFunc("/getSettings", getSettings).Methods("GET")
 	router.HandleFunc("/setSettings", setSettings).Methods("POST")
 	router.HandleFunc("/setLeds", setLeds).Methods("POST")
@@ -56,24 +56,29 @@ func addViews() {
 func StartServer(port string) {
 	router = mux.NewRouter()
 
+	logger.Log("Loading resources...")
 	addResources()
+
+	logger.Log("Creating endpoints...")
 	addEndpoints()
+
+	logger.Log("Creating views...")
 	addViews()
 
 	leds.LoadSettings()
 	canvas := leds.InitCanvas()
-
+	logger.Log("Loading leds...")
 	leds.Load()
 
 	defer canvas.Close()
-
+	logger.Log(fmt.Sprintf("Starting server on port %s", port))
 	http.ListenAndServe(port, router)
 }
 
 func getSettings(w http.ResponseWriter, r *http.Request) {
 	settings := leds.GetSettings()
 
-	dat, _ := json.Marshal(*settings)*/
+	dat, _ := json.Marshal(*settings)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(dat)
@@ -178,5 +183,5 @@ func setTransition(w http.ResponseWriter, r *http.Request) {
 }
 
 func stopTransition(w http.ResponseWriter, r *http.Request) {
-	go leds.StopTransition()
+	leds.StopTransition()
 }

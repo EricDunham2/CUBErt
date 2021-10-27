@@ -15,6 +15,8 @@ func Transition(colors []string, method string, steps uint, stepDuration uint) {
 
 	stop = false
 
+	logger.Log("Generating transition with colors")
+
 	c1, _ := colorful.Hex(colors[0])
 	c2, _ := colorful.Hex(colors[1])
 	c3, _ := colorful.Hex(colors[2])
@@ -140,5 +142,6 @@ func LinearGradient(c1 colorful.Color, c2 colorful.Color, method string, offset 
 }
 
 func StopTransition() {
+	logger.Log("Stopping current transition")
 	stop = true
 }
